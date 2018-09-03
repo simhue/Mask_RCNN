@@ -1,0 +1,6 @@
+.idea
+venv
+*.py__*
+
+# sentinel products
+products
