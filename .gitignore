@@ -56,3 +56,8 @@ pip-delete-this-directory.txt
 .venv
 venv/
 ENV/
+
+# Eclipse
+.metadata/
+.project
+.pydevproject
