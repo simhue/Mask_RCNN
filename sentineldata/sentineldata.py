@@ -12,7 +12,6 @@ import sys
 ROOT_DIR = os.path.join(os.getcwd(), "..")
 SENTINELPRODUCTS_DIR = os.path.join(ROOT_DIR, "sentineldata", "products")
 GEOJSON_DIR = os.path.join(ROOT_DIR, "datasets", "crop-disease")
-SENTINELDATA_DIR = os.path.join(SENTINELPRODUCTS_DIR, "data")
 REGION_DATA_FILE = os.path.join(GEOJSON_DIR, "regions.json")
 
 
@@ -86,18 +85,17 @@ def download_sentinel_products_for_ROI(geojson_file):
 
     # unzip all products
     files = get_files_in_path(SENTINELPRODUCTS_DIR)
-    if not os.path.exists(SENTINELDATA_DIR):
-        os.mkdir(SENTINELDATA_DIR)
 
+    import zipfile
+    import re
+    
     for file in files:
-        import zipfile
-
-        with zipfile.ZipFile(os.path.join(SENTINELPRODUCTS_DIR, file)) as zip_ref:
-            try:
-                zip_ref.extractall(path=SENTINELDATA_DIR)
-            except Exception:
-                print(zip_ref + " already extracted. Skip file.")
-                continue
+        zip_ref = zipfile.ZipFile(os.path.join(SENTINELPRODUCTS_DIR, file))
+        # only extract B04 and B08 bands
+        for info in zip_ref.infolist():
+            if re.match(r"^.*(B04|B08)(_10m|)\.jp2", info.filename):
+                zip_ref.extract(info, path=SENTINELPRODUCTS_DIR)
+        zip_ref.close()
 
     return api.to_geodataframe(products)
 
@@ -151,17 +149,13 @@ for feature in geojson.features:
     import fiona
     geom = geopandas.GeoDataFrame.from_features(FeatureCollection([feature]))
 
+    # TODO raise exceptions if no CRS is given
     if not geom.crs:
         geom.crs = fiona.crs.from_epsg(4326)
 
     for product in feature.properties["sentinelproducts"]:
-        for root, dir_names, file_names in os.walk(os.path.join(SENTINELDATA_DIR, product)):
-            sorted_files = sorted(list(filter(lambda item:
-                                                    # L1C products or
-                                                    item.endswith("B04.jp2") or item.endswith("B08.jp2")
-                                                    # L2A products
-                                                    or item.endswith("B04_10m.jp2") or item.endswith("B08_10m.jp2"),
-                                              fnmatch.filter(file_names, '*.jp2'))))
+        for root, dir_names, file_names in os.walk(os.path.join(SENTINELPRODUCTS_DIR, product)):
+            sorted_files = sorted(fnmatch.filter(file_names, "*.jp2"))
             if len(sorted_files) == 0:
                 continue;
 
