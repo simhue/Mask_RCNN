@@ -8,6 +8,7 @@ import os
 from os import listdir
 from os.path import isfile, join
 import sys
+from geojson import FeatureCollection
 
 ROOT_DIR = os.path.join(os.getcwd(), "..")
 SENTINELPRODUCTS_DIR = os.path.join(ROOT_DIR, "sentineldata", "products")
@@ -23,40 +24,52 @@ api = SentinelAPI(user, pw, url)
 
 def download_sentinel_products_for_ROI(geojson_file):
     print("Searching products for %s" % geojson_file)
-    geojson = read_geojson(geojson_file)
-    if geojson.features[0].properties.get("id") is None:
+    feature = read_geojson(geojson_file)
+    
+    if feature.properties.get("id") is None:
         # generate id
         import uuid
-        geojson.features[0].properties["id"] = str(uuid.uuid4())
+        feature.properties["id"] = str(uuid.uuid4())
 
-    footprint = geojson_to_wkt(geojson)
+    footprint = geojson_to_wkt(feature.geometry)
 
-    feature = geojson.features[0]
     date = feature.properties["date"]
     incubation = feature.properties["incubation"]
     
     # TODO adjustable coverage interval
+    # Config file?
     min_cloudcoverpercentage = 0
     max_cloudcoverpercentage = 100
-    cloudcoverpercentage = min_cloudcoverpercentage
+    cloudcoverpercentage = max_cloudcoverpercentage
 
     while True:
         products = api.query(footprint,
                              date=(date + "-" + incubation, date),
                              platformname="Sentinel-2",
                              filename="S2A_*",
+                             area_relation="intersects",
                              cloudcoverpercentage=(min_cloudcoverpercentage, cloudcoverpercentage)
                              )
         if len(products) > 0:
-            print("Found %d Products, downloading %d GB" % (len(products), api.get_products_size(products)))
+            print("Found {} Products, downloading {} GB".format(len(products), api.get_products_size(products)))
             break
         elif len(products) == 0:
-            # if no products found, end programm
-            if cloudcoverpercentage >= max_cloudcoverpercentage:
+            # if no products found, search for all avaivable products regardsless of cloudcoverage
+            products = api.query(footprint,
+                             date=(date + "-" + incubation, date),
+                             platformname="Sentinel-2",
+                             filename="S2A_*",
+                             area_relation="intersects"
+                             )
+            
+            if len(products) == 0:
                 print("Found no products for specified search terms.")
-                exit(1)
-            cloudcoverpercentage += 5
-            print("Found no products. Increasing cloud coverage to %d %%" % cloudcoverpercentage)
+            else:
+                from operator import itemgetter
+                sorted_products = sorted([product["cloudcoverpercentage"] for product in products.values()], reverse=True)
+                print("Found {} products with max. cloud coverage of {} %%".format(len(products), sorted_products[0]))
+            
+            break
 
     if not os.path.exists(SENTINELPRODUCTS_DIR):
         os.makedirs(SENTINELPRODUCTS_DIR)
@@ -67,7 +80,7 @@ def download_sentinel_products_for_ROI(geojson_file):
         print(err)
 
     # map geojson to product IDs for the training
-    geojson.features[0].properties["sentinelproducts"] = list(map(lambda item: item["filename"], products.values()))
+    feature.properties["sentinelproducts"] = list(map(lambda product: product["filename"], products.values()))
 
     if not os.path.exists(REGION_DATA_FILE):
         open(REGION_DATA_FILE, "w").close()
@@ -76,9 +89,9 @@ def download_sentinel_products_for_ROI(geojson_file):
     with open(REGION_DATA_FILE, "r") as f:
         try:
             regions = json.load(f)
-            regions["features"].append(geojson.features[0])
+            regions["features"].append(feature)
         except ValueError:
-            regions = geojson
+            regions = FeatureCollection([feature])
 
     with open(REGION_DATA_FILE, "w") as f:
         json.dump(regions, f)
@@ -143,15 +156,14 @@ NDVI_DIR = os.path.join(SENTINELPRODUCTS_DIR, "ndvi")
 if not os.path.exists(NDVI_DIR):
     os.mkdir(NDVI_DIR)
 
-geojson = read_geojson(REGION_DATA_FILE)
-for feature in geojson.features:
-    from geojson import FeatureCollection
+feature = read_geojson(REGION_DATA_FILE)
+
+for feature in feature.features:
     import fiona
     geom = geopandas.GeoDataFrame.from_features(FeatureCollection([feature]))
 
-    # TODO raise exceptions if no CRS is given
-    if not geom.crs:
-        geom.crs = fiona.crs.from_epsg(4326)
+    # use WGS84
+    geom.crs = fiona.crs.from_epsg(4326)
 
     for product in feature.properties["sentinelproducts"]:
         for root, dir_names, file_names in os.walk(os.path.join(SENTINELPRODUCTS_DIR, product)):
@@ -163,14 +175,16 @@ for feature in geojson.features:
 
             with rasterio.open(b4) as red:
                 bounding_box = create_bb_data_frame(red.bounds.left, red.bounds.bottom, red.bounds.right, red.bounds.top)
-                # polygons from geojson to target crs
+                
+                # project feature to target (sentinel product) crs
                 mapped_geom = geom.to_crs(red.crs)
-                # ensure that all polygons intersect bounding box
+                
+                # filter every polygon that intersects the bounding box
                 filtered_polygons = list(filter(lambda item: bounding_box.intersects(item).bool(),
                                                 mapped_geom.geometry))
                 polygons = list(map(lambda item: json.loads(geopandas.GeoSeries(item).to_json())["features"][0]["geometry"],
                                     filtered_polygons))
-                # get mask from geojson data
+                # get mask from feature data
                 red_cropped_mask, red_cropped_transform = mask.mask(red, polygons, crop=True)
                 profile = red.meta.copy()
 
@@ -192,3 +206,4 @@ for feature in geojson.features:
                 
             # save ndvi values for later use
             ndvi.dump(ndvi_mask_file)
+
