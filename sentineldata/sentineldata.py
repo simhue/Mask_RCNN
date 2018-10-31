@@ -43,8 +43,6 @@ def download_sentinel_products_for_ROI(geojson_file):
     products = api.query(footprint,
                          date=(date + "-" + incubation, date),
                          platformname="Sentinel-2",
-                         filename="S2A_*",
-                         area_relation="intersects",
                          cloudcoverpercentage=(min_cloudcoverpercentage, cloudcoverpercentage)
                          )
     if len(products) > 0:
@@ -55,8 +53,7 @@ def download_sentinel_products_for_ROI(geojson_file):
                          date=(date + "-" + incubation, date),
                          platformname="Sentinel-2",
                          filename="S2A_*",
-                         area_relation="intersects"
-                         )
+                         area_relation="intersects")
         
         if len(products) == 0:
             print("Found no products for specified search terms.")
@@ -103,7 +100,7 @@ def unzip_sentinel_products():
         zip_ref = zipfile.ZipFile(os.path.join(SENTINELPRODUCTS_DIR, file))
         # only extract B04 and B08 bands
         for info in zip_ref.infolist():
-            if re.match(r"^.*(B04|B08)(_10m|)\.jp2", info.filename):
+            if re.match(r"^.*(B04|B08)(_10m|)\.jp2$", info.filename):
                 zip_ref.extract(info, path=SENTINELPRODUCTS_DIR)
         zip_ref.close()
 
@@ -112,10 +109,10 @@ def get_files_in_path(path):
     return [f for f in listdir(path) if isfile(join(path, f))]
 
 
-
 # calculate ndvi
 def getndvi(nir_band, red_band):
-    return (nir_band.astype(rasterio.float32) - red_band.astype(rasterio.float32)) / (nir_band + red_band)
+    import numpy as np
+    return np.nan_to_num((nir_band.astype(rasterio.float32) - red_band.astype(rasterio.float32)) / (nir_band + red_band))
 
 
 def create_bb_data_frame(left, bottom, right, top):
@@ -153,45 +150,59 @@ def create_ndvi_rois():
         geom.crs = fiona.crs.from_epsg(4326)
     
         product = feature.properties["sentinelproduct"]
+        # counter for rois per products
+        i = 0
         for root, dir_names, file_names in os.walk(os.path.join(SENTINELPRODUCTS_DIR, product)):
             sorted_files = sorted(fnmatch.filter(file_names, "*.jp2"))
             if len(sorted_files) == 0:
                 continue;
-
+            
             b4, b8 = list(map(lambda item: os.path.join(root, item), sorted_files))
 
             with rasterio.open(b4) as red:
-                bounding_box = create_bb_data_frame(red.bounds.left, red.bounds.bottom, red.bounds.right, red.bounds.top)
-                
+                red_bb = create_bb_data_frame(red.bounds.left, red.bounds.bottom, red.bounds.right, red.bounds.top)
+
                 # project feature to target (sentinel product) crs
-                mapped_geom = geom.to_crs(red.crs)
+                projected_geom = geom.to_crs(red.crs)
                 
-                # filter every polygon that intersects the bounding box
-                filtered_polygons = list(filter(lambda item: bounding_box.intersects(item).bool(),
-                                                mapped_geom.geometry))
-                polygons = list(map(lambda item: json.loads(geopandas.GeoSeries(item).to_json())["features"][0]["geometry"],
-                                    filtered_polygons))
+                # ensure ROI is inside product
+                if not red_bb.contains(projected_geom).bool():
+                    continue
+
+                # create a GeoJSON-like dict - needed for rasterio.mask
+                roi_polygons = list(map(lambda item: json.loads(geopandas.GeoSeries(item).to_json())["features"][0]["geometry"],
+                                    projected_geom.geometry))
+                roi_bb = create_bb_data_frame(projected_geom.bounds.minx, projected_geom.bounds.miny,
+                                              projected_geom.bounds.maxx, projected_geom.bounds.maxy)
+                roi_bb_polygons = list(map(lambda item: json.loads(geopandas.GeoSeries(item).to_json())["features"][0]["geometry"],
+                                                    roi_bb.geometry))
+
                 # get mask from feature data
-                red_cropped_mask, red_cropped_transform = mask.mask(red, polygons, crop=True)
+                red_mask, red_transform = mask.mask(red, roi_polygons, crop=True, filled=False)
+                red_bb_mask, red_bb_transform = mask.mask(red, roi_bb_polygons, crop=True)
+
+
                 profile = red.meta.copy()
 
             with rasterio.open(b8) as nir:
-                nir_cropped_mask, nir_cropped_transform = mask.mask(nir, polygons, crop=True)
+                # nir_cropped_mask, _ = mask.mask(nir, roi_polygons, crop=True, filled=False)
+                nir_bb_mask, _ = mask.mask(nir, roi_bb_polygons, crop=True)
 
-            ndvi = getndvi(nir_cropped_mask, red_cropped_mask)
+            ndvi = getndvi(nir_bb_mask, red_bb_mask)
 
             profile.update({"driver":    "GTiff",
                             "dtype":     rasterio.float32,
-                            "height":    red_cropped_mask.shape[1],
-                            "width":     red_cropped_mask.shape[2],
-                            "transform": red_cropped_transform})
+                            "height":    red_bb_mask.shape[1],
+                            "width":     red_bb_mask.shape[2],
+                            "transform": red_bb_transform})
 
             ndvi_file = os.path.join(NDVI_DIR, feature.properties["id"] + ".tif")
-            ndvi_mask_file = os.path.join(NDVI_DIR, feature.properties["id"] + ".mask")
+            mask_file = os.path.join(NDVI_DIR, feature.properties["id"] + ".mask")
+            
             with rasterio.open(ndvi_file, "w", **profile) as dst:
                 dst.write(ndvi)                
-            # save ndvi values for later use
-            ndvi.dump(ndvi_mask_file)
+            # save mask values for later use
+            red_mask.mask.dump(mask_file)
 
     
 def populate_set(train_set, train_dir):
@@ -225,7 +236,12 @@ def create_training_sets():
     populate_set(train_set, TRAIN_DIR)
     populate_set(val_set, VAL_DIR)
 
+
+if os.path.exists(REGION_DATA_FILE):
+    os.remove(REGION_DATA_FILE)
+    
 files = get_files_in_path(GEOJSON_DIR)
+
 
 for file in files:
     if file.endswith(".geojson"):
