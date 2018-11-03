@@ -64,7 +64,7 @@ class CropDiseaseConfig(Config):
     Derives from the base Config class and overrides some values.
     """
     BACKBONE = "resnet50"
-    
+
     # Give the configuration a recognizable name
     NAME = "crop-disease"
 
@@ -72,21 +72,23 @@ class CropDiseaseConfig(Config):
 
     # Number of classes (including background)
     # TODO: Dynamic number of classes
-    NUM_CLASSES = 1 + 1  
+    NUM_CLASSES = 1 + 1
 
     # Number of training steps per epoch
-    STEPS_PER_EPOCH = 400
-    
-    # IMAGE_CHANNEL_COUNT = 1
+    # TODO: Dynamic steps per epoch
+    STEPS_PER_EPOCH = 14
+
+    RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128)
 
     IMAGE_RESIZE_MODE = "square"
     IMAGE_MIN_DIM = 128
     IMAGE_MAX_DIM = 128
-    
+
+    # Images are really small, so no need for a mini mask
     USE_MINI_MASK = False
-    
+
     DETECTION_MIN_CONFIDENCE = 0.8
-    
+
     MEAN_PIXEL = np.array([52, 52, 52])
 
 ############################################################
@@ -249,78 +251,7 @@ def train(model):
                 epochs=1,
                 layers='all')
     
-    
-    
-    
-def color_splash(image, mask):
-    """Apply color splash effect.
-    image: RGB image [height, width, 3]
-    mask: instance segmentation mask [height, width, instance count]
-    Returns result image.
-    """
-    # Make a grayscale copy of the image. The grayscale copy still
-    # has 3 RGB channels, though.
-    gray = skimage.color.gray2rgb(skimage.color.rgb2gray(image)) * 255
-    # Copy color pixels from the original color image where mask is set
-    if mask.shape[-1] > 0:
-        # We're treating all instances as one, so collapse the mask into one layer
-        mask = (np.sum(mask, -1, keepdims=True) >= 1)
-        splash = np.where(mask, image, gray).astype(np.uint8)
-    else:
-        splash = gray.astype(np.uint8)
-    return splash
 
-
-def detect_and_color_splash(model, image_path=None, video_path=None):
-    assert image_path or video_path
-
-    # Image or video?
-    if image_path:
-        # Run model detection and generate the color splash effect
-        print("Running on {}".format(image_path))
-        # Read image
-        image = skimage.color.gray2rgb(skimage.io.imread(image_path))
-        # Detect objects
-        r = model.detect([image], verbose=1)[0]
-        # Color splash
-        splash = color_splash(image, r['masks'])
-        # Save output
-        file_name = "splash_{:%Y%m%dT%H%M%S}.png".format(datetime.datetime.now())
-        skimage.io.imsave(file_name, splash)
-    elif video_path:
-        import cv2
-        # Video capture
-        vcapture = cv2.VideoCapture(video_path)
-        width = int(vcapture.get(cv2.CAP_PROP_FRAME_WIDTH))
-        height = int(vcapture.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        fps = vcapture.get(cv2.CAP_PROP_FPS)
-
-        # Define codec and create video writer
-        file_name = "splash_{:%Y%m%dT%H%M%S}.avi".format(datetime.datetime.now())
-        vwriter = cv2.VideoWriter(file_name,
-                                  cv2.VideoWriter_fourcc(*'MJPG'),
-                                  fps, (width, height))
-
-        count = 0
-        success = True
-        while success:
-            print("frame: ", count)
-            # Read next image
-            success, image = vcapture.read()
-            if success:
-                # OpenCV returns images as BGR, convert to RGB
-                image = image[..., ::-1]
-                # Detect objects
-                r = model.detect([image], verbose=0)[0]
-                # Color splash
-                splash = color_splash(image, r['masks'])
-                # RGB -> BGR to save image to video
-                splash = splash[..., ::-1]
-                # Add image to video writer
-                vwriter.write(splash)
-                count += 1
-        vwriter.release()
-        print("Saved to ", file_name)
 
 ############################################################
 #  Training
@@ -369,8 +300,7 @@ if __name__ == '__main__':
             # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
             GPU_COUNT = 1
             IMAGES_PER_GPU = 1
-            #IMAGE_RESIZE_MODE = "square"
-            #IMAGE_MIN_DIM = 2048
+            DETECTION_MIN_CONFIDENCE = 0.5
             
 
         config = InferenceConfig()
@@ -419,7 +349,7 @@ if __name__ == '__main__':
         # detect_and_color_splash(model, image_path="ndvi.tif")
         # Run detection
          
-        image = skimage.color.gray2rgb(skimage.io.imread("ndvi-2.tif") * 255)
+        image = skimage.color.gray2rgb(skimage.io.imread("ndvi.tif") * 255)
         results = model.detect([image], verbose=1)
         
         # Visualize results

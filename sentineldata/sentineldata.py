@@ -10,6 +10,7 @@ from os.path import isfile, join
 import sys
 from geojson import FeatureCollection
 import shutil
+import numpy as np
 
 ROOT_DIR = os.path.join(os.getcwd(), "..")
 SENTINELPRODUCTS_DIR = os.path.join(ROOT_DIR, "sentineldata", "products")
@@ -112,7 +113,12 @@ def get_files_in_path(path):
 # calculate ndvi
 def getndvi(nir_band, red_band):
     import numpy as np
-    return np.nan_to_num((nir_band.astype(rasterio.float32) - red_band.astype(rasterio.float32)) / (nir_band + red_band))
+    nir = nir_band.astype(rasterio.float32)
+    red = red_band.astype(rasterio.float32)
+    nom = nir - red
+    denom = nir + red
+    # avoid divide by zero error https://stackoverflow.com/a/37977222
+    return np.divide(nom, denom, out=np.zeros_like(nom), where=denom != 0)
 
 
 def create_bb_data_frame(left, bottom, right, top):
@@ -134,6 +140,20 @@ def create_bb_data_frame(left, bottom, right, top):
     bb_polygon = Polygon([np1, np2, np3, np4])
 
     return geopandas.GeoDataFrame(geopandas.GeoSeries(bb_polygon), columns=['geometry'])
+
+def get_all_zero_cols(arr):
+    # https://stackoverflow.com/questions/16092557/how-to-check-that-a-matrix-contains-a-zero-column/16092714#16092714
+    return np.where(~arr[0].any(axis=0))[0]
+
+
+def get_all_zero_rows(arr):
+    # https://stackoverflow.com/questions/23726026/finding-which-rows-have-all-elements-as-zeros-in-a-matrix-with-numpy
+    return np.where(~arr[0].any(axis=1))[0]
+
+
+def remove_all_zeroes(arr, row_idx, col_idx):
+    return np.delete(np.delete(arr, row_idx, axis=1), col_idx, axis=2)
+
 
 def create_ndvi_rois():
     if os.path.exists(NDVI_DIR):
@@ -185,24 +205,33 @@ def create_ndvi_rois():
                 profile = red.meta.copy()
 
             with rasterio.open(b8) as nir:
-                # nir_cropped_mask, _ = mask.mask(nir, roi_polygons, crop=True, filled=False)
                 nir_bb_mask, _ = mask.mask(nir, roi_bb_polygons, crop=True)
 
             ndvi = getndvi(nir_bb_mask, red_bb_mask)
 
+            # bounding box masks can contain all 0 cols/rows at the border, needs to be cleaned so the data do not
+            # interfere with the training
+            row_idx = get_all_zero_rows(red_bb_mask)
+            col_idx = get_all_zero_cols(red_bb_mask)
+
+            ndvi = remove_all_zeroes(ndvi, row_idx, col_idx)
+            red_mask = remove_all_zeroes(red_mask.mask, row_idx, col_idx)
+
+            # persist ndvi and mask for training step
             profile.update({"driver":    "GTiff",
                             "dtype":     rasterio.float32,
-                            "height":    red_bb_mask.shape[1],
-                            "width":     red_bb_mask.shape[2],
+                            "height":    ndvi.shape[1],
+                            "width":     ndvi.shape[2],
                             "transform": red_bb_transform})
 
             ndvi_file = os.path.join(NDVI_DIR, feature.properties["id"] + ".tif")
             mask_file = os.path.join(NDVI_DIR, feature.properties["id"] + ".mask")
-            
+
             with rasterio.open(ndvi_file, "w", **profile) as dst:
                 dst.write(ndvi)                
             # save mask values for later use
-            red_mask.mask.dump(mask_file)
+            red_mask.dump(mask_file)
+
 
     
 def populate_set(train_set, train_dir):
