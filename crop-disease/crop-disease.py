@@ -30,14 +30,12 @@ Usage: import the module (see Jupyter notebooks for examples), or run from
 import os
 import sys
 import json
-import datetime
 import numpy as np
 import geojson
-from geojson.feature import Feature
 import skimage.draw
 import skimage
-from skimage.external import tifffile
 import skimage.color
+
 # Root directory of the project
 ROOT_DIR = os.path.abspath("../")
 
@@ -46,7 +44,6 @@ sys.path.append(ROOT_DIR)  # To find local version of the library
 from mrcnn.config import Config
 from mrcnn import model as modellib, utils
 from mrcnn import visualize
-from IPython.display import display, Image
 # Path to trained weights file
 COCO_WEIGHTS_PATH = os.path.join(ROOT_DIR, "mask_rcnn_coco.h5")
 
@@ -76,7 +73,7 @@ class CropDiseaseConfig(Config):
 
     # Number of training steps per epoch
     # TODO: Dynamic steps per epoch
-    STEPS_PER_EPOCH = 14
+    STEPS_PER_EPOCH = 144
 
     RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128)
 
@@ -87,9 +84,13 @@ class CropDiseaseConfig(Config):
     # Images are really small, so no need for a mini mask
     USE_MINI_MASK = False
 
-    DETECTION_MIN_CONFIDENCE = 0.8
-
     MEAN_PIXEL = np.array([52, 52, 52])
+
+
+class InferenceConfig(CropDiseaseConfig):
+    IMAGES_PER_GPU = 1
+    GPU_COUNT = 1
+    DETECTION_MIN_CONFIDENCE = 0.0
 
 ############################################################
 #  Dataset
@@ -104,7 +105,7 @@ class CropDiseaseDataset(utils.Dataset):
         """
         
         # Train or validation dataset?
-        assert subset in ["train", "val"]
+        assert subset in ["train", "val", "test"]
         subset_dir = os.path.join(dataset_dir, subset)
         
         # Add classes. We have only one class to add.
@@ -123,7 +124,6 @@ class CropDiseaseDataset(utils.Dataset):
                 image_id=feature.properties["id"],
                 path=image_path)
 
-
     def load_mask(self, image_id):
         """Generate instance masks for an image.
         Returns:
@@ -140,7 +140,6 @@ class CropDiseaseDataset(utils.Dataset):
 
         # Return mask, and array of class IDs of each instance.
         return mask.astype(np.bool), np.ones([mask.shape[-1]], dtype=np.int32)
-
 
     def get_mask(self, image_info):
         # read mask that was saved during generating the ndvi
@@ -159,7 +158,6 @@ class CropDiseaseDataset(utils.Dataset):
         else:
             super(self.__class__, self).image_reference(image_id)
 
-            
     def load_image(self, image_id):
         """Override to return image"""
         # Load image
@@ -176,7 +174,7 @@ class MultipleDiseasesDataset(CropDiseaseDataset):
         """
         
         # Train or validation dataset?
-        assert subset in ["train", "val"]
+        assert subset in ["train", "val", "test"]
         subset_dir = os.path.join(dataset_dir, subset)
         
         # Add classes. We have only one class to add.
@@ -214,6 +212,10 @@ class MultipleDiseasesDataset(CropDiseaseDataset):
         # Return mask, and array of class IDs of each instance.
         return mask.astype(np.bool), np.array([image_info["annotation"]]).astype(np.int32)
 
+############################################################
+#  Training / Detection
+############################################################
+
 
 def train(model):
     """Train the model."""
@@ -234,6 +236,7 @@ def train(model):
         mask, class_ids = dataset_train.load_mask(image_id)
         visualize.display_top_masks(image, mask, class_ids, dataset_train.class_names)
 
+
     # Validation dataset
     print("Loading validation set")
     dataset_val = CropDiseaseDataset()
@@ -245,16 +248,62 @@ def train(model):
     for i, info in enumerate(dataset_val.class_info):
         print("{:3}. {:50}".format(i, info['name']))
 
+    # Test dataset
+    print("Loading test set")
+    dataset_test = CropDiseaseDataset()
+    dataset_test.load_crop_disease(args.dataset, "test")
+    dataset_test.prepare()
+
+    print("Image Count: {}".format(len(dataset_test.image_ids)))
+    print("Class Count: {}".format(dataset_test.num_classes))
+    for i, info in enumerate(dataset_test.class_info):
+        print("{:3}. {:50}".format(i, info['name']))
+
+    model_inference = modellib.MaskRCNN(mode="inference", config=InferenceConfig(), model_dir=model.model_dir)
+    test_map_callback = modellib.MeanAveragePrecisionCallback(model, model_inference, dataset_test,
+                                                              calculate_at_every_X_epoch=1,
+                                                              label="test_mean_average_precision")
+
+    val_map_callback = modellib.MeanAveragePrecisionCallback(model, model_inference, dataset_val,
+                                                             calculate_at_every_X_epoch=1)
+
+    train_map_callback = modellib.MeanAveragePrecisionCallback(model, model_inference, dataset_train,
+                                                               calculate_at_every_X_epoch=1,
+                                                               label="train_mean_average_precision")
+
     print("Start training")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE,
-                epochs=1,
-                layers='all')
+                epochs=20,
+                layers='all',
+                custom_callbacks=[val_map_callback, test_map_callback, train_map_callback])
     
+
+def detect(model, dataset, image_id):
+    image = dataset.load_image(image_id)
+    mask, class_ids = dataset.load_mask(image_id)
+
+    visualize.display_top_masks(image, mask, class_ids, dataset.class_names)
+
+    results = model.detect([image], verbose=1)
+
+    # Visualize results
+    r = results[0]
+    visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
+                                ["BG", "infection"], r['scores'])
+
+# def detect(model, filename):
+#     image = skimage.color.gray2rgb(skimage.io.imread(filename) * 255)
+#     results = model.detect([image], verbose=1)
+#
+#     # Visualize results
+#     r = results[0]
+#     visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
+#                                 ["BG", "infection"], r['scores'])
 
 
 ############################################################
-#  Training
+#  Main
 ############################################################
 
 
@@ -266,7 +315,7 @@ if __name__ == '__main__':
         description='Train Mask R-CNN to detect balloons.')
     parser.add_argument("command",
                         metavar="<command>",
-                        help="'train' or 'splash'")
+                        help="'train' or 'detect'")
     parser.add_argument('--dataset', required=False,
                         metavar="/path/to/balloon/dataset/",
                         help='Directory of the Balloon dataset')
@@ -294,16 +343,8 @@ if __name__ == '__main__':
     if args.command == "train":
         config = CropDiseaseConfig()
     else:
-
-        class InferenceConfig(CropDiseaseConfig):
-            # Set batch size to 1 since we'll be running inference on
-            # one image at a time. Batch size = GPU_COUNT * IMAGES_PER_GPU
-            GPU_COUNT = 1
-            IMAGES_PER_GPU = 1
-            DETECTION_MIN_CONFIDENCE = 0.5
-            
-
         config = InferenceConfig()
+
     config.display()
 
     # Create model
@@ -348,15 +389,26 @@ if __name__ == '__main__':
         # load image
         # detect_and_color_splash(model, image_path="ndvi.tif")
         # Run detection
-         
-        image = skimage.color.gray2rgb(skimage.io.imread("ndvi.tif") * 255)
-        results = model.detect([image], verbose=1)
-        
-        # Visualize results
-        r = results[0]
-        visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'], 
-                                       ["BG", "Anthracnose"], r['scores'])
-        
+
+        print("Loading test set")
+        dataset_test = CropDiseaseDataset()
+        dataset_test.load_crop_disease(args.dataset, "test")
+        dataset_test.prepare()
+
+        print("Image Count: {}".format(len(dataset_test.image_ids)))
+        print("Class Count: {}".format(dataset_test.num_classes))
+        for i, info in enumerate(dataset_test.class_info):
+            print("{:3}. {:50}".format(i, info['name']))
+
+        image_ids = dataset_test.image_ids
+        np.random.shuffle(image_ids)
+        for image_id in image_ids[:10]:
+            detect(model, dataset_test, image_id)
+
+        # detect(model, "ndvi.tif")
+        # detect(model, "ndvi-2.tif")
+        # detect(model, "ndvi-3.tif")
+        # detect(model, "ndvi-4.tif")
     else:
         print("'{}' is not recognized. "
               "Use 'train' or 'detect'".format(args.command))
