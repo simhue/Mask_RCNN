@@ -81,7 +81,7 @@ class CropDiseaseConfig(Config):
     IMAGE_MIN_DIM = 128
     IMAGE_MAX_DIM = 128
 
-    # Images are really small, so no need for a mini mask
+    # Images are small, so no need for a mini mask
     USE_MINI_MASK = False
 
     MEAN_PIXEL = np.array([52, 52, 52])
@@ -147,8 +147,8 @@ class CropDiseaseDataset(utils.Dataset):
         # the mask needs to be inverted and reshaped since it comes in a shape like [1, height, width]
         # but we need [height, width, 1] (the one represents the number of instances,
         # but since we only have one instance of an image we use 1)
-        mask = masked_arr != True
-        return np.expand_dims(mask[0], axis=2)
+        # mask = masked_arr != True
+        return np.expand_dims(masked_arr[0], axis=2)
 
     def image_reference(self, image_id):
         """Return the path of the image."""
@@ -234,7 +234,13 @@ def train(model):
     for image_id in image_ids:
         image = dataset_train.load_image(image_id)
         mask, class_ids = dataset_train.load_mask(image_id)
-        visualize.display_top_masks(image, mask, class_ids, dataset_train.class_names)
+        # visualize.display_top_masks(image, mask, class_ids, dataset_train.class_names)
+        visualize.display_instances(image,
+                                    np.array([[ 0,  1, 41, 55]]),
+                                    mask, class_ids,
+                                    ["BG", "mask"],
+                                    scores=[1.0],
+                                    show_bbox=False)
 
 
     # Validation dataset
@@ -274,8 +280,8 @@ def train(model):
     print("Start training")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE,
-                epochs=20,
-                layers='all',
+                epochs=25,
+                layers='heads',
                 custom_callbacks=[val_map_callback, test_map_callback, train_map_callback])
     
 
@@ -292,14 +298,15 @@ def detect(model, dataset, image_id):
     visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
                                 ["BG", "infection"], r['scores'])
 
-# def detect(model, filename):
-#     image = skimage.color.gray2rgb(skimage.io.imread(filename) * 255)
-#     results = model.detect([image], verbose=1)
-#
-#     # Visualize results
-#     r = results[0]
-#     visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
-#                                 ["BG", "infection"], r['scores'])
+
+def detect_image(model, filename):
+    image = skimage.color.gray2rgb(skimage.io.imread(filename) * 255)
+    results = model.detect([image], verbose=1)
+
+    # Visualize results
+    r = results[0]
+    visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
+                                ["BG", "infection"], r['scores'])
 
 
 ############################################################
@@ -402,13 +409,13 @@ if __name__ == '__main__':
 
         image_ids = dataset_test.image_ids
         np.random.shuffle(image_ids)
-        for image_id in image_ids[:10]:
-            detect(model, dataset_test, image_id)
+        # for image_id in image_ids[:10]:
+        #     detect(model, dataset_test, image_id)
 
-        # detect(model, "ndvi.tif")
-        # detect(model, "ndvi-2.tif")
-        # detect(model, "ndvi-3.tif")
-        # detect(model, "ndvi-4.tif")
+        detect_image(model, "ndvi.tif")
+        detect_image(model, "ndvi-2.tif")
+        detect_image(model, "ndvi-3.tif")
+        detect_image(model, "ndvi-4.tif")
     else:
         print("'{}' is not recognized. "
               "Use 'train' or 'detect'".format(args.command))

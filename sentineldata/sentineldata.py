@@ -177,7 +177,7 @@ def create_ndvi_rois():
 
         product = feature.properties["sentinelproduct"]
         # counter for rois per products
-        i = 0
+        i_rotations = 0
         for root, dir_names, file_names in os.walk(os.path.join(SENTINELPRODUCTS_DIR, product)):
             sorted_files = sorted(fnmatch.filter(file_names, "*.jp2"))
             if len(sorted_files) == 0:
@@ -199,11 +199,11 @@ def create_ndvi_rois():
 
                 # https://gis.stackexchange.com/questions/243639/how-to-take-cell-size-from-raster-using-python-or-gdal-or-rasterio
                 pixel_size_x = red.transform[0]
-                pixel_size_y = -red.transform[4]
+                pixel_size_y = abs(red.transform[4])
 
                 # target pixel size
-                dim_x = 128 * pixel_size_x
-                dim_y = 128 * pixel_size_y
+                dim_x = 64 * pixel_size_x
+                dim_y = 64 * pixel_size_y
 
                 # create bounding box with a margin
                 min_x = projected_geom.bounds.minx
@@ -214,8 +214,6 @@ def create_ndvi_rois():
                 diff_y = max_y - min_y
                 margin_x = (dim_x - diff_x) / 2
                 margin_y = (dim_y - diff_y) / 2
-                margin_x_pix = margin_x / pixel_size_x
-                margin_y_pix = margin_y / pixel_size_y
 
                 roi_bb = create_bb_data_frame(min_x - margin_x,
                                               min_y - margin_y,
@@ -233,18 +231,28 @@ def create_ndvi_rois():
                         projected_geom.geometry))
                 # get mask from feature data
                 red_mask, red_transform = mask.mask(red, roi_polygons, crop=True, filled=False)
-                # pad red mask to target size
-                red_mask_padded = np.pad(red_mask.mask[0],
+
+                # since the roi shape is smaller than the bounding box,
+                # the roi needs to be padded correctly to fit the bounding box
+                y_upper_margin = abs(red_bb_transform[5] - red_transform[5]) / pixel_size_y
+                y_lower_margin = red_bb_mask[0].shape[0] - y_upper_margin - red_mask.mask[0].shape[0]
+
+                x_left_margin = abs(red_bb_transform[2] - red_transform[2]) / pixel_size_x
+                x_right_margin = red_bb_mask[0].shape[1] - x_left_margin - red_mask.mask[0].shape[1]
+
+                red_mask_padded = np.pad(red_mask.mask[0] != True,
+                        # pad top / bottom
                        ((
-                           math.ceil((red_bb_mask[0].shape[0] - red_mask.mask[0].shape[0])/2),
-                           math.floor((red_bb_mask[0].shape[0] - red_mask.mask[0].shape[0])/2)
+                           int(y_upper_margin),
+                           int(y_lower_margin)
                         ),
+                        # pad left / right
                         (
-                            math.ceil((red_bb_mask[0].shape[1] - red_mask.mask[0].shape[1])/2),
-                            math.floor((red_bb_mask[0].shape[1] - red_mask.mask[0].shape[1])/2)
+                            int(x_left_margin),
+                            int(x_right_margin)
                         )),
                        "constant",
-                       constant_values=True)
+                       constant_values=False)
                 profile = red.meta.copy()
 
             with rasterio.open(b8) as nir:
@@ -262,14 +270,12 @@ def create_ndvi_rois():
 
             # rotate 36 times
             # for i in np.random.choice(np.arange(360), 36, replace=False):
-            for i in range(4):
+            for i_rotations in range(4):
                 # original, mirrored by x and mirrored by y
                 for axis in range(-1, 2):
-                    new_feature = copy.deepcopy(feature)
-                    new_feature.properties["id"] = str(uuid.uuid4())
 
-                    mod_ndvi = np.rot90(ndvi, k=i)
-                    mod_mask = np.rot90(red_mask, k=i)
+                    mod_ndvi = np.rot90(ndvi, k=i_rotations)
+                    mod_mask = np.rot90(red_mask, k=i_rotations)
 
                     # mod_ndvi = ndimage.rotate(ndvi[0], i)
                     # mod_mask = ndimage.rotate(red_mask[0], i)
@@ -278,22 +284,27 @@ def create_ndvi_rois():
                         mod_ndvi = np.flip(mod_ndvi, axis)
                         mod_mask = np.flip(mod_mask, axis)
 
-                    # persist ndvi and mask for training step
-                    profile.update({"driver": "GTiff",
-                                    "dtype": rasterio.float32,
-                                    "height": mod_ndvi.shape[0],
-                                    "width": mod_ndvi.shape[1],
-                                    "transform": red_bb_transform})
+                    for random_crop_count in range(1,10):
+                        cropped_ndvi, cropped_mask = random_crop(mod_ndvi, mod_mask, (16, 16))
+                        # persist ndvi and mask for training step
+                        profile.update({"driver": "GTiff",
+                                        "dtype": rasterio.float32,
+                                        "height": cropped_ndvi.shape[0],
+                                        "width": cropped_ndvi.shape[1],
+                                        "transform": red_bb_transform})
 
-                    ndvi_file = os.path.join(NDVI_DIR, new_feature.properties["id"] + ".tif")
-                    mask_file = os.path.join(NDVI_DIR, new_feature.properties["id"] + ".mask")
+                        new_feature = copy.deepcopy(feature)
+                        new_feature.properties["id"] = str(uuid.uuid4())
 
-                    with rasterio.open(ndvi_file, "w", **profile) as dst:
-                        dst.write(np.array([mod_ndvi]))
-                    # save mask values for later use
-                    np.array([mod_mask]).dump(mask_file)
+                        ndvi_file = os.path.join(NDVI_DIR, new_feature.properties["id"] + ".tif")
+                        mask_file = os.path.join(NDVI_DIR, new_feature.properties["id"] + ".mask")
 
-                    regions["features"].append(new_feature)
+                        with rasterio.open(ndvi_file, "w", **profile) as dst:
+                            dst.write(np.array([cropped_ndvi]))
+                        # save mask values for later use
+                        np.array([cropped_mask]).dump(mask_file)
+
+                        regions["features"].append(new_feature)
 
     with open(REGION_DATA_FILE, "w+") as f:
         json.dump(regions, f)
@@ -334,6 +345,24 @@ def create_training_sets():
     populate_set(train_set, TRAIN_DIR)
     populate_set(val_set, VAL_DIR)
     populate_set(test_set, TEST_DIR)
+
+
+# https://github.com/matterport/Mask_RCNN/issues/230#issuecomment-369076178
+def random_crop(x, y, crop_size=(256,256)):
+    assert x.shape[0] == y.shape[0]
+    assert x.shape[1] == y.shape[1]
+    h, w, = x.shape
+    rangew = (w - crop_size[0]) // 2 if w>crop_size[0] else 0
+    rangeh = (h - crop_size[1]) // 2 if h>crop_size[1] else 0
+    offsetw = 0 if rangew == 0 else np.random.randint(rangew)
+    offseth = 0 if rangeh == 0 else np.random.randint(rangeh)
+    cropped_x = x[offseth:offseth+crop_size[0], offsetw:offsetw+crop_size[1]]
+    cropped_y = y[offseth:offseth+crop_size[0], offsetw:offsetw+crop_size[1]]
+    #cropped_y = cropped_y[:, :, ~np.all(cropped_y==0, axis=(0,1))]
+    if cropped_y.shape[-1] == 0:
+        return x, y
+    else:
+        return cropped_x, cropped_y
 
 
 if os.path.exists(REGION_DATA_FILE):
