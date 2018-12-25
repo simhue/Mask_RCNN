@@ -1,0 +1,93 @@
+	Gliederung Masterarbeit
+Abstrakt
+
+Einführung
+	Motivation
+		- unbehandelte Krankheit verringert den Ertrag beträchtlich
+			- https://link.springer.com/article/10.1007/s11119-016-9495-0
+		- Frühe Erkennung von Anthracnose sorgt für gezielten Einsatz von Medizin/Pestiziden/Chemikalien -> besser für die Umwelt
+	Problemstellung
+		- Wie kann ich Anthracnose früh identifizieren, ohne dass ich persönlich die Felder regelmäßig inspizieren muss?
+	Zielstellung
+		- Über frei zugängliche Satellitenaufnahmen sollen möglichst genau infizierte Felder erkannt werden.
+		
+Biologischer Hintergrund
+	Anthracnose
+	- Zusammenhang Chlorophylgehalt <-> Gesundheit Pflanze
+	- Chlorophylgehalt ist durch spektrale Reflektionen messbar
+	https://www.sciencedirect.com/science/article/pii/S0176161704704034
+	Vegetation Indizes
+		- NDVI gibt einen Indikator für den Stresslevel einer Pflanze
+
+Sentinel-2
+	- Kurze Erklärung Copernicus-Programm
+	- Kurze Erklärung Sentinel
+	- https://www.copernicus.eu/en/homepage
+	- https://sentinel.esa.int/web/sentinel/user-guides/sentinel-2-msi/resolutions/spatial
+	- https://www.esa.int/Our_Activities/Observing_the_Earth/Copernicus/Sentinel-2/Introducing_Sentinel-2
+
+KNN
+	Anforderungen an das Netzwerk
+	- Erkennung auf Pixelebene
+	- Schnelles Training
+	- Hohe Genauigkeit
+	- Robustheit
+	Backbone ResNet
+	- https://arxiv.org/abs/1512.03385
+	CNN (?)
+	- http://yann.lecun.com/exdb/publis/pdf/lecun-98.pdf
+	RCNN
+	- https://arxiv.org/pdf/1311.2524.pdf
+	Fast RCNN
+	- https://arxiv.org/pdf/1504.08083.pdf
+	Faster RCNN
+	- https://arxiv.org/pdf/1506.01497.pdf
+	Feature Pyramid Networks
+	- https://arxiv.org/abs/1612.03144
+	Mask RCNN
+	- https://arxiv.org/abs/1703.06870
+	- https://github.com/matterport/Mask_RCNN
+
+Overfitting
+	- Was ist overfitting?
+	- Was kann ich gegen Overfitting machen?
+	- Augmentation
+	- Regulization
+	- einfache Modelle nutzen
+
+Information über Anthracnosedaten
+	Herkunft der Daten
+	Details
+
+
+Implementierung
+	Vortrainierte Gewichte
+		CoCo
+		- http://cocodataset.org/#home
+	
+	Vorbereitung der Daten
+		Manuelle Annotation
+		Automatische Beschaffung der Sentinelprodukte
+		ROI aus Sentinelprodukten ausschneiden
+		NDVI berechnen
+		Augmentierung
+		Erstellung Training-/Validierungs-/Testdatensatz
+
+	Training
+		Einführung Matterport MaskRCNN
+		Erklärung wichtiger Konfigurationen
+
+
+Durchführung Experimente
+	Aufbau Experimente
+		Konfiguration
+		Trainingsablauf
+		Erwartetes Ergebnis
+		Eigentliches Ergebnis
+
+Diskussion Ergebnisse
+
+Fazit und Zusammenfassung
+
+Aussicht
+

@@ -1,0 +1,105 @@
+\documentclass[a4paper,12pt,headsepline]{report}
+
+%----------------- PDF CONFIG ----------------- %
+\pdfinfo{    
+     /Title (PDF-Titel) 
+     /Subject   (PDF-Thema)    
+     /Author  (Vorname Nachname) 
+     /Keywords   (Stichwort1,Stichwort2)      
+} 
+
+\title{MyTitle}
+\author{theAuthor}
+\date{1.1.2000}
+
+
+
+%----------------- PAKETE INKLUDIEREN ----------------- %
+
+\usepackage{geometry} % Packet für Seitenrandabständex und Einstellung für Seitenränder
+\usepackage[ngerman]{babel} % deutsche Silbentrennung
+
+\usepackage{todonotes}
+\usepackage{booktabs} %entzerrt die Tabellenzeilen und bietet verschieden dicke Unterteilungslinien
+\usepackage{longtable} % Tabellen können sich nicht über mehrere Seiten 
+\usepackage{graphicx} % kann LaTeX Grafiken einbinden
+
+\usepackage{amsmath}
+
+
+\usepackage[utf8]{inputenc} % Umlaute unter Mac werden automatisch gesetzt
+\usepackage[T1]{fontenc} % Zeichenencoding
+\usepackage{lmodern} % typographische Qualität 
+\frenchspacing % Schaltet den zusätzlichen Zwischenraum ab
+\usepackage{fix-cm}
+\usepackage{hyperref} % verwandelt alle Kapitelüberschriften, Verweise aufs Literaturverzeichnis und andere Querverweise in PDF-Hyperlinks
+\usepackage{color}
+\usepackage{url}
+
+% Für Literaturnachweise
+\usepackage{csquotes}
+%\usepackage[style=amsalpha,backend=biber]{biblatex}
+%\addbibresource{literature.bib}
+
+
+\usepackage[nottoc]{tocbibind}
+
+% für Listings
+\usepackage{listings}
+\lstset{numbers=left, numberstyle=\tiny, numbersep=5pt, stepnumber=4, keywordstyle=\color{black}\bfseries\itshape, stringstyle=\ttfamily,showstringspaces=false,basicstyle=\footnotesize,captionpos=b}
+\lstset{language=python}
+
+
+%----------------- FARBEN DEFINIEREN ----------------- %
+\definecolor{gray}{gray}{0.95} % Listingsbackground
+
+%----------------- LAYOUT SETZEN ----------------- %
+\geometry{left=3cm, right=3cm, top=3cm, bottom=3cm}
+\linespread {1.25}\selectfont %1.25 da er von Haus aus 1.2 ist und 1,25 * 1,2 = 1,5 isch
+
+
+
+
+%-------##-------##-------##------- ANFANG INHALT -------##-------##-------##-------%
+\begin{document}
+
+
+%----------------- DECKBLATT -----------------%
+ % \include{title}
+ 
+ 
+ 
+%----------------- VERZEICHNISSE -----------------%
+\tableofcontents % Inhaltverzeichnis
+
+%----------------- INHALT -----------------%
+\include{concept}
+
+% ----- Abbildungen ----- %
+\addcontentsline{toc}{section}{Abbildungsverzeichnis} % falls in Inhalsverzeichnis
+\listoffigures
+
+% ----- Tabellen----- %
+% \addcontentsline{toc}{section}{Tabellenverzeichnis}  % falls in Inhalsverzeichnis
+% \fancyhead[L]{Abbildungsverzeichnis / Abkürzungsverzeichnis} %Kopfzeile linksx
+% \listoftables
+
+% ----- Listings ----- %
+% Listingverzeichnis soll im Inhaltsverzeichnis auftauchen
+%\addcontentsline{toc}{section}{Listingverzeichnis}
+%\fancyhead[L]{Abbildungs- / Tabellen- / Listingverzeichnis} %Kopfzeile links
+%\renewcommand{\lstlistlistingname}{Listingverzeichnis}
+%\lstlistoflistings
+
+\pagestyle{plain} % zurueck setzen von roemische seitenanzahl
+
+
+%\printbibliography
+\bibliographystyle{abbrv}
+\bibliography{literature}
+	
+% ----- Listings ----- %
+
+\include{statement}
+
+\end{document}
