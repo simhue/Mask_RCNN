@@ -42,7 +42,7 @@ Besonders wichtig sind die Bänder B4 (Rot) und B8 (Nahes Infrarot). Mit diesen 
 Dabei ist es auch wichtig, dass die Satelliten regelmäßige Daten liefern können. Durch die gemeinsame Konstellation übertragen die Plattformen alle fünf Tage Daten über einen spezifischen Punkt auf der Erdoberfläche.\cite{ref:sentinel:resolutions} Damit ist gewährleistet, dass der Feldbesitzer ohne persönliche Inspektion ein bis zweimal in der Woche eine Gesundheitseinschätzung über seine Felder erhält.
 
 \section{Mask R-CNN}\label{sec:maskrcnn}
-In Kapitel \ref{sec:ndvi} und \ref{sec:sentinel2} wurde erklärt wie Daten über die möglichen Erkrankungen geliefert und verarbeitet werden können. Auf den zugrunde liegenden Bilddaten soll nun ein künstliches neuronales Netzwerk (KNN) trainiert werden. In diesem Kapitel wird darauf eingegangen, welche Anforderungen an das KNN gestellt werden und warum das Titel gebende Netz ausgewählt wurde.
+In Kapitel \ref{sec:ndvi} und \ref{sec:sentinel2} wurde erklärt wie Daten über die möglichen Erkrankungen geliefert und verarbeitet werden können. Auf den zugrunde liegenden Bilddaten soll nun ein künstliches neuronales Netzwerk (KNN) trainiert werden. In diesem Kapitel wird darauf eingegangen, welche Anforderungen an das KNN gestellt werden, warum das Titel gebende Netz ausgewählt wurde und wie dieses funktioniert.
 
 \subsection{Grundlagen}\label{sec:sub:basics}
 
@@ -50,7 +50,7 @@ In Kapitel \ref{sec:ndvi} und \ref{sec:sentinel2} wurde erklärt wie Daten über
   \centering
   \includegraphics[width=0.95\textwidth]{pics/neural-net.PNG}
   \caption[Künstliches neuronales Netz]{Künstliches neuronales Netz\cite{ref:verrelst}}
-  \label{fig:instance-segmentation}
+  \label{fig:ann}
 \end{figure}
 
 \noindent
@@ -67,7 +67,7 @@ beschreibt das Neuron $j$ in Schicht $l+1$, wobei
 
 \todo{Hier sollte ggf. noch die Erklärung von Training und Validierung hin. Oder doch eigenes Kapitel in overfitting?}
 \noindent
-Es gibt noch andere Arten von KNNs. Die Arten, die Teil dieser Arbeit sind, werden in den folgenden Kapitel beschrieben.
+\textit{Convolutional Neural Networks} (CNN, dt.: faltendes neurales Netzwerk) sind Kategorien von KNNs, die besonders in \textit{Computer Vision} Anwendung finden. CNNs extrahieren durch Faltungen sog. Feature Maps. Die Dimensionen der Feature Maps werden in einem Poolingschritt\footnote{Es gibt verschiedene Arten von Pooling (Max, Average, Sum, ...). Dabei wird die Feature Map in sich angrenzende $m*m$ px große Felder eingeteilt. Im Falle von Max-Pooling wird der höchste Wert aus dem Feld genommen.} reduziert.  
 
 \subsection{Anforderungen}\label{sec:sub:requirements}
 Das KNN muss in der Lage sein, wahrscheinliche Krankheiten in der zu untersuchenden Agrarfläche möglichst genau eingrenzen und klassifizieren zu können. Das ist besonders wichtig, wenn ein Feld von multiplen Krankheiten betroffen ist.\\\\
@@ -78,18 +78,25 @@ Daraus ergeben sich folgende Kriterien für das neuronale Netzwerk:
 \begin{itemize}
 	\item Erkennung auf Pixelebene
 	\item Robustheit
-	\item Schnelles Training
 	\item Hohe Genauigkeit 
 \end{itemize}
 
 \subsection{Mask R-CNN}\label{sec:sub:mask-rcnn}
 
+
+Im Rahmen dieser Arbeit wird das \textit{Mask Region-based Convolutional Neural Network} untersucht. Mask R-CNN ist eine von Facebook AI Research entwickelte Erweiterung des \textit{Faster R-CNN} und kann verschiedene Instanzen einer Klasse in einem Bild von einander trennen. Dazu muss zuerst die Begriffe der Instanzsegmentierung definiert werden.
+\\\\
 \begin{figure}[ht]
   \centering
   \includegraphics[width=0.95\textwidth]{pics/instance-segmentation.png}
   \caption[Instanzsegmentierung]{Unterschied Klassifizierung / semantische Segmentierung / Objekterkennung / Instanzsegmentierung\cite{ref:matterport:maskrcnn}}
   \label{fig:instance-segmentation}
 \end{figure}
-
-Einfache Klassifizierung (engl.: classification) ordnet Bilder als Ganzes einer Klasse zu. \textit{Semantische Segmentierung} (engl.: semantic segmentation) beschreibt die Klassifizierung auf Pixelebene. Es wird erkannt zu welcher Klasse eine Menge von Pixeln gehören, aber es wird nicht zwischen einzelnen Objekten unterschieden. \textit{Objekterkennung} (engl.: object detection) entdeckt und lokalisiert unterschiedliche Objekte, indem es eine Bounding Box um jedes erkannte Objekt zieht. Jedoch fehlt hier die pixelgenaue Abgrenzung einzelner Objektinstanzen. \text{Instanzsegmentierung} (engl.: instance segmentation) kombiniert \textit{Objekterkennung} und \textit{semantische Segmentierung} und ist so in der Lage zwischen einzelnen Objekten zu unterscheiden und ihnen entsprechende Pixel zuzuordnen (s. Abb. \ref{fig:instance-segmentation}).\cite{ref:maskrcnn}
+\noindent
+Einfache Klassifizierung (engl.: classification) ordnet Bilder als Ganzes einer Klasse zu. \textit{Semantische Segmentierung} (engl.: semantic segmentation) beschreibt die Klassifizierung auf Pixelebene. Es wird erkannt zu welcher Klasse eine Menge von Pixeln gehören, aber es wird nicht zwischen einzelnen Objekten unterschieden. \textit{Objekterkennung} (engl.: object detection) entdeckt und lokalisiert unterschiedliche Objekte, indem es eine Bounding Box um jedes erkannte Objekt zieht. Jedoch fehlt hier die pixelgenaue Abgrenzung einzelner Objektinstanzen. \text{Instanzsegmentierung} (engl.: instance segmentation) kombiniert \textit{Objekterkennung} und \textit{semantische Segmentierung} und ist so in der Lage zwischen einzelnen Objekten zu unterscheiden und ihnen entsprechende Pixel zuzuordnen (s. Abb. \ref{fig:instance-segmentation}) und ist eine der größten Herausforderungen in der Bildverarbeitung.\cite{ref:maskrcnn}
 \\\\
+Mask R-CNN ist wie Faster R-CNN in zwei Segmente eingeteilt. In dem ersten Segment, dem \textit{Region Proposal Network} (RPN), werden mehrere Rahmen (Bounding Boxes) innerhalb eines Bildes vorgeschlagen, die interessante Objekte beinhalten können.\cite{ref:faster-r-cnn} Die vorgeschlagene Rahmen oder auch Regionen, die einzeln von CNNs bewertet werden, ist der Kernansatz von R-CNN. Das RPN wurde identisch von Faster R-CNN für Mask R-CNN übernommen.\cite{ref:maskrcnn} 
+\\\\
+Im zweiten Segment werden die Rahmen klassifiziert. Die Rahmen haben verschiedene Größen und können Probleme bei der Klassifizierung verursachen. Daher werden die Rahmen auf eine kleine Feature Map gleicher Größe (z.B. $7*7$ px) reduziert. Die Authoren von \cite{ref:maskrcnn} schlagen eine Methode namens \textit{RoI-Align} vor, bei der Proben aus der Feature Map entnommen werden und eine bilineare Interpolation angewendet wird. In dem bei Faster R-CNN angewandten Verfahren \textit{RoI-Pooling} entstehen durch Quantisierung Informationsverluste und räumliche Abweichungen zwischen Bounding Box und Feature Map, was negative Auswirkungen auf die Maskengenerierung haben kann. 
+\\\\
+Gleichzeitig werden in einem parallelen Zweig für jede Bounding Box $k$ $m*n$ große binären Maske erzeugt, wobei $k$ die Anzahl der vorhergesagten Klassen ist. Typischerweise für semantische Segmentierung werden die Klassen auf eine Maske abgebildet, was dafür sorgt, dass die Klassen konkurieren müssen. Durch die separaten Masken erreicht Mask R-CNN gute Ergebnisse bei der Instanzsegmentierung.\cite{ref:maskrcnn}
