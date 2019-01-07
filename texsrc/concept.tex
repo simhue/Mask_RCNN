@@ -1,7 +1,3 @@
-%\chapter{Biologischer Hintergrund}\label{chap:biology}
-
-%In diesem Kapitel wird beschrieben, in welchem Zusammenhang der Chlorophyllgehalt einer Pflanze mit der Vitalität eben dieser steht. Und es wird erklärt wie der Chlorophyllgehalt %genutzt werden kann, um  den Stresslevel einer Pflanze zu bestimmen.
-
 \chapter{Konzept}\label{chap:concept}
 
 \section{Normalized Difference Vegetation Index}\label{sec:ndvi}
@@ -131,7 +127,7 @@ Im zweiten Segment werden aus den Regionen \textit{Bounding Boxes} (dt.: Rahmen)
 %\noindent
 Die oberen vollständig vernetzten Schichten (\textit{FC Layers} in Abb. \ref{fig:maskrcnn-architecture}) klassifizieren die Regionen und die Bounding Boxes berechnet. Dieser Zweig ist für die Objekterkennung wichtig und noch mit Faster R-CNN gemeinsam. 
 \\\\
-Gleichzeitig werden in einem parallelen Zweig je Bounding Box $k$ $m*n$ große Masken zur semantischen Segmentierung erzeugt, wobei $k$ die Anzahl der Klassen ist.  Anders als in dem ersten Zweig des zweiten Segmentes werden die Masken durch \textit{fully convolutional networks} (FCN, dt.: vollständig faltende Netzwerke) prognostiziert. Diese bestehen nur aus faltenden Schichten, wie sie in Kapitel \ref{sec:sub:sub:cnn} beschrieben sind. Eine Maske ist eine räumliche Kodierung eines Objektes und daher ist es wichtig räumliche Informationen beizubehalten. Diese können durch die Pixel-zu-Pixel-Übereinstimmung extrahiert werden, welche sonst durch vollständig vernetzter Schichten verloren gehen. Diese geben einen Vektor ohne räumliche Dimensionen aus.\cite{ref:maskrcnn} \todo{FCN und wie wird Maske erzeugt?}
+Gleichzeitig werden in einem parallelen Zweig je Bounding Box $k$ $m*n$ große Masken zur semantischen Segmentierung erzeugt, wobei $k$ die Anzahl der Klassen ist.  Anders als in dem ersten Zweig des zweiten Segmentes werden die Masken durch \textit{fully convolutional networks} (FCN, dt.: vollständig faltende Netzwerke) prognostiziert. Diese bestehen nur aus faltenden Schichten, wie sie in Kapitel \ref{sec:sub:sub:cnn} beschrieben sind. Eine Maske ist eine räumliche Kodierung eines Objektes und daher ist es wichtig räumliche Informationen beizubehalten. Diese können durch die Pixel-zu-Pixel-Übereinstimmung extrahiert werden, welche sonst durch vollständig vernetzter Schichten verloren gehen. Diese geben einen Vektor ohne räumliche Dimensionen aus.\cite{ref:maskrcnn} \todo{FCN und wie wird Maske erzeugt?} \todo{Definition Backbone ResNet}
 \\\\
 \begin{figure}[ht]
   \centering
@@ -148,4 +144,3 @@ Gleichzeitig werden in einem parallelen Zweig je Bounding Box $k$ $m*n$ große M
 \noindent
 In \cite{ref:maskrcnn} wird Mask R-CNN mit den \textit{COCO challenge}-Gewinnern\footnote{COCO (Common Objects in Context, dt.: Gewöhnliche Objekte im Kontext) enthält einen Datensatz von über 200000 Bildern in über 80 Kategorien. Der Datensatz ist eine oft genutzte Basis, um Objekterkennungstechniken zu evaluieren und zu bewerten.\cite{ref:coco}} der Jahre 2015 und 2016 verglichen. Der Vergleich zeigt, dass Mask R-CNN in der Challenge bessere Werte erzielt als die Konkurenten (s. Tab. \. Desweiteren fällt \textit{fully convolutional instance segmentation} (FCIS, dt.: vollständig faltende Instanzsegmentierung) auf, wenn es mit überlappenden Objekten konfrontiert wird. Dort erzeugt es Artefakte, welche durch Mask R-CNN nicht entstehen (s. Abb. \ref{fig:maskvsfcis}). Durch diese Gegenüberstellungen wird gezeigt, dass Mask R-CNN alle aufgeführten Anforderungen erzielt. Es erkennt Klasseninstanzen auf Pixelebene und weist eine hohe Robustheit auf. Auch die Genauigkeit hebt sich beim direkten Vergleich ab. Aus diesen Gründen wurde Mask R-CNN im Rahmen diese Arbeit ausgewählt.
 
-\subsection{Implementa}
