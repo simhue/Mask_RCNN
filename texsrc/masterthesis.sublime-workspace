@@ -48,7 +48,7 @@
 			"file": "main.tex",
 			"settings":
 			{
-				"buffer_size": 3125,
+				"buffer_size": 4240,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -57,9 +57,69 @@
 			"file": "concept.tex",
 			"settings":
 			{
-				"buffer_size": 15193,
+				"buffer_size": 2255,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Picard: Rin! (this is slang/dialect of \"Rein\" )\nTroy: Hallo Käpt'n.\nPicard: Ja, Alde.\nT: Oh, lecker!\nP: Ja, Junge, Alde, das ist Kaffee, echt jetzt, und Kaffee ist nun mal lecker. Schwarz, stark und vor allem schön lecker. Äh .. echt jetzt.\nT: Schwarz und schön lecker.\nP: Ja, Junge, wenn ich ehrlich bin - woah - dann trinke ich am liebsten echt schwarzen Kaffee. \nT: Vor allem wenn der schön schwarz und lecker ist, Käpt'n?\nP: Schwarzer, Junge. Jetzt echt schwarzer Kaffee - woah - Junge. Der schmeckt richtig. Richtig lecker schmeckt der, echt jetzt. Das ist wie mit den Figuren hier, echt jetzt, Junge, nur dass die nicht schwarz sind.Aber, wat die Figuren jetzt echt mit dem Kaffee zu tun haben, das werde ich dir jetzt erklären, Alde. \nT: Was haben denn die weißen Figuren mit dem schwarzen Kaffee zu tun?\nP: Ja, dat liegt wohl ganz klar auf der Hand, oder wat, wa? Aber als Ärztin müsstest du echt wissen, was der Kaffee damit zu tun hat. Schöner schwarzer heißer schöner Kaffee, scheiße ..\nT: Man kann auch Milch reinschütten?\nP: Schwarzer, Junge... Der ist doch nicht mehr schwarz, wenn du da Milch reintust. Ich erklär dir das erstmal. Schwarzer, schöner, heißer Kaffee, richtig dunkelschwarzer, heißer Kaffee...\nT: Also dann ohne Milch?\nP: Ich glaube, ich habe mir gerade echt ein Ei eingeklemmt, scheiße, Junge.\nT: Oh, selbst Schuld.\n---- CUT ----\nP: Ja, dann ist ja alles klar. Dann rechnet der Data das mal aus, der Geordi kümmert sich darum und du machst was du am Besten kannst: Kaffee kochen. Mach he, Junge.\nT: Gute Idee.\nGeordi: Wiewat, hat einer verstanden, was die gesagt hat, oder wie, oder wat? Kann ich da vielleicht auch eine Tasse haben, oder wie? Ich habe nämlich Durst, wiewat?\nP: Schwarzer Kaffee, Junge, weißt du eigentlich wie gut der schmeckt, Junge? Echt jetzt. Und wenn ich Kaffee sag - woah - dann meine ich richtig dunkelschwarzen, kochendheißen, echt leckeren extrem schwarzen Kaffee, Junge. Und wenn du meinen Kaffee anpackst, woah Junge, dann trete ich dir deine fiese Schnauze aus der Fresse.. die fiese Fresse .. aus der Schnauze\n",
+			"settings":
+			{
+				"buffer_size": 2071,
+				"line_ending": "Windows",
+				"name": "Picard: Rin! (this is slang/dialect of \"Rein\" )"
+			}
+		},
+		{
+			"file": "methods.tex",
+			"settings":
+			{
+				"buffer_size": 16131,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/F/projects/crop-disease/Mask_RCNN/datasets/2018_Anzola_T1_described_new.geojson",
+			"settings":
+			{
+				"buffer_size": 612,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/F/projects/crop-disease/Mask_RCNN/datasets/S_bicolor_F_disease_Anzola_T1_2018_described.geojson.bck.csv",
+			"settings":
+			{
+				"buffer_size": 344,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/F/projects/crop-disease/Mask_RCNN/datasets/S_bicolor_F_disease_Anzola_T1_2018_described.geojson.bck",
+			"settings":
+			{
+				"buffer_size": 730,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/F/projects/crop-disease/Mask_RCNN/datasets/2018_Anzola_T1_described_new.csv",
+			"settings":
+			{
+				"buffer_size": 239,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "overfitting.tex",
+			"settings":
+			{
+				"buffer_size": 7954,
+				"encoding": "UTF-8",
+				"line_ending": "Windows",
+				"name": "\\chapter{Overfitting}\\label{chap:overfitting}"
 			}
 		},
 		{
@@ -69,16 +129,6 @@
 				"buffer_size": 2492,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "overfitting.tex",
-			"settings":
-			{
-				"buffer_size": 6016,
-				"encoding": "UTF-8",
-				"line_ending": "Windows",
-				"name": "\\chapter{Overfitting}\\label{chap:overfitting}"
 			}
 		},
 		{
@@ -94,7 +144,7 @@
 			"file": "literature.bib",
 			"settings":
 			{
-				"buffer_size": 14156,
+				"buffer_size": 15013,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -206,6 +256,8 @@
 	],
 	"file_history":
 	[
+		"/F/projects/crop-disease/Mask_RCNN/texsrc/struktur.txt",
+		"/F/projects/crop-disease/Mask_RCNN/texsrc/main.bbl",
 		"/C/git/Masterthesis/src/statement.tex",
 		"/C/git/Masterthesis/src/main.log",
 		"/C/Users/Simon/AppData/Roaming/Sublime Text 3/Packages/User/LaTeXTools.sublime-settings",
@@ -245,6 +297,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			",",
+			".",
+			"°",
+			"\"",
+			"'",
+			"\\\\\n",
+			"mask r",
 			"texit",
 			"\\texit{",
 			"3cm",
@@ -312,7 +371,7 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -340,7 +399,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 12,
 					"type": "text"
 				},
 				{
@@ -349,26 +408,35 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3125,
+						"buffer_size": 4240,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2297,
-								2297
+								2435,
+								2435
 							]
 						],
 						"settings":
 						{
+							"WordCount":
+							{
+								"changes": 39,
+								"count": 133,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
 							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 889.0,
+						"translation.y": 1485.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -377,35 +445,194 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15193,
+						"buffer_size": 2255,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6883,
-								6883
+								2255,
+								2255
 							]
 						],
 						"settings":
 						{
+							"WordCount":
+							{
+								"changes": 4705,
+								"count": 199,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
 							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 1296.0,
+						"translation.y": 315.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2071,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2070,
+								2070
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 2524,
+								"count": 344,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"auto_name": "Picard: Rin! (this is slang/dialect of \"Rein\" )",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "struktur.txt",
+					"buffer": 4,
+					"file": "methods.tex",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2492,
+						"buffer_size": 16131,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16131,
+								16131
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 33,
+								"count": 1697,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 3564.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/F/projects/crop-disease/Mask_RCNN/datasets/2018_Anzola_T1_described_new.geojson",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 612,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								609,
+								0
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 0,
+								"count": 13,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/F/projects/crop-disease/Mask_RCNN/datasets/S_bicolor_F_disease_Anzola_T1_2018_described.geojson.bck.csv",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 344,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								55,
+								236
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 0,
+								"count": 3,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/F/projects/crop-disease/Mask_RCNN/datasets/S_bicolor_F_disease_Anzola_T1_2018_described.geojson.bck",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 730,
 						"regions":
 						{
 						},
@@ -413,44 +640,91 @@
 						[
 							[
 								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 324.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "overfitting.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6016,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5236,
-								5236
+								730
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 12,
-								"count": 703,
+								"changes": 0,
+								"count": 21,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/F/projects/crop-disease/Mask_RCNN/datasets/2018_Anzola_T1_described_new.csv",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 239,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								205,
+								29
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 0,
+								"count": 1,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "overfitting.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7954,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7936,
+								7936
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 1564,
+								"count": 919,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -460,14 +734,52 @@
 							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 702.0,
+						"translation.y": 810.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 10,
+					"file": "struktur.txt",
+					"semi_transient": true,
+					"settings":
+					{
+						"buffer_size": 2492,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1717,
+								1717
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 0,
+								"count": 179,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 324.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
 					"semi_transient": false,
 					"settings":
 					{
@@ -491,24 +803,24 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 6,
+					"buffer": 12,
 					"file": "literature.bib",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 14156,
+						"buffer_size": 15013,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7081,
-								7081
+								13966,
+								13966
 							]
 						],
 						"settings":
@@ -518,10 +830,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 108.0,
+						"translation.y": 3516.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 11,
 					"type": "text"
 				}
 			]
