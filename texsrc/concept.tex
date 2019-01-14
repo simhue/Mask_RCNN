@@ -20,7 +20,7 @@ Zu Beginn werden die Regionen, die entweder für das Training benutzt oder über
 	\item Zeitraum des Befalls und
 	\item Bezeichnung der Infektion.
 \end{itemize}
-Als Format dieser Informationen dient \textit{GeoJSON}\footnote{GeoJSON ist eine Erweiterung des JSON-Format und beschreibt geografische Daten und Geometrien. GeoJSON wird durch den RFC7946-Standard definiert.}. GeoJSON enthält nicht nur geografische Daten, sondern ist auch um benutzerdefinierte Eigenschaften (\texttt{properties}) erweiterbar. Die Annotationen sind also GeoJSON-Features, die ein geografisches Polygon und Metadaten enthalten.
+Als Format dieser Informationen dient \textit{GeoJSON}\footnote{GeoJSON ist eine Erweiterung des JSON-Format und beschreibt geografische Daten und Geometrien. GeoJSON wird durch den RFC7946-Standard definiert.}. GeoJSON enthält nicht nur geografische Daten, sondern ist auch um benutzerdefinierte Eigenschaften (\texttt{properties}) erweiterbar. Die Annotationen sind also GeoJSON-Features, die ein geografisches Polygon mit Metadaten enthalten.
 
 \begin{lstlisting}[language=json,caption={Annotation},captionpos=b]
 {
@@ -59,17 +59,45 @@ Es ist angebracht einen Zeitraum von mehreren Tagen bzw. Wochen zu wählen, da d
 
 \section{Suche nach Sentinelprodukte}
 
+
+Der \textit{Copernicus Open Access Hub}\footnote{\url{https://scihub.copernicus.eu/}} ermöglicht freien und offenen Zugriff auf Sentinel-Produkte. Die Daten sind sowohl über eine grafische Oberfläche als auch über eine REST-API verfübar. Vorrausgesetzung für beide Optionen ist ein Account, der über die grafische Oberfläche erstellt werden kann.
+\\\\
+Die Nutzung der Schnittstelle erfolgt über die Python-Bibliothek \texttt{sentinelsat}\footnote{https://sentinelsat.readthedocs.io/en/stable}. Bei einer Anfrage müssen die GeoJSON-Dateien in WKT\footnote{WKT (Well-known text) ist eine Markup-Sprache zur Repräsentation von geometrischen Objekten auf Karten und räumlichen Referenzsystemen.} umgewandelt werden, was von der Bibliothek übernommen werden kann. Die WKT-Geometrie wird als \textit{footprint} (dt.: Fußabdruck) bezeichnet. Solang es nicht anders angegeben wird, gibt die Corpernicus-API Produkte zurück, die die RoI schneiden. Desweiteren wird der Plattformname statisch als `Sentinel-2' definiert, damit keine Produkte von den anderen Sentinelplattformen zurückgegeben werden. Der Suchzeitraum wird aus der jeweiligen GeoJSON-Datei übernommen. Sollten für die Suchanfragen keine Produkte existieren, wird die Anwendung beendet, da es keine Basis gibt, auf der das Netzwerk trainiert werden kann. Eventuell muss bei so einem Fall der Zeitraum erweitert und Prozess wiederholt werden. Bei vorhandenen Produkten lädt das Skript diese herunter. Die Produkte werden in einem komprimierten Format geliefert und enthalten neben zusätzlichen Informationen, Banddaten in separaten Dateien im JPEG2000-Format\footnote{JPEG 2000 genau wie GeoTIFF ist ein Bildformat in dem auch Metadaten abgelegt werden können. So sind Pixel geografischen Koordinaten zuordbar.}.
+\\\\
+Für jedes Produkt, das zur aktuellen Annotation gehört, wird ein neuer Eintrag zu einer \textit{FeatureCollection} hinzugefügt. Für die spätere Entwicklung sind die Annotationen so leichter zu finden und bearbeitbar. Außerdem bleiben dadurch die Originaldaten unberührt. Dieser Schritt wird für jede vorhandene Annotationsdatei wiederholt. Anschließend werden die Bilddateien für B4 und B8 aus dem Produkt extrahiert.
+
 \begin{figure}[ht]
   \centering
-  \includegraphics[height=\textheight]{pics/get-products.png}
+  \includegraphics[height=\textheight-31pt]{pics/get-products.png}
   \caption{Ablaufdiagramm der Beschaffung der Sentinelprodukte}
   \label{fig:get-products}
 \end{figure}
 
-Der \textit{Copernicus Open Access Hub}\footnote{\url{https://scihub.copernicus.eu/}} ermöglicht freien und offenen Zugriff auf Sentinel-Produkte. Die Daten sind sowohl über eine grafische Oberfläche als auch über eine REST-API verfübar. Vorrausgesetzung für beide Optionen ist ein Account, der über die grafische Oberfläche erstellt werden kann.
-\\\\
-Die Nutzung der Schnittstelle erfolgt über die Python-Bibliothek \texttt{sentinelsat}\footnote{https://sentinelsat.readthedocs.io/en/stable}. Bei einer Anfrage müssen die GeoJSON-Dateien in WKT\footnote{WKT (Well-known text) ist eine Markup-Sprache zur Repräsentation von geometrischen Objekten auf Karten und räumlichen Referenzsystemen.} umgewandelt werden, was von der Bibliothek übernommen werden kann. Die WKT-Geometrie wird als \textit{footprint} (dt.: Fußabdruck) bezeichnet. Desweiteren wird der Plattformname statisch als `Sentinel-2' definiert, damit keine Produkte von den anderen Sentinelplattformen zurückgegeben werden. Der Suchzeitraum wird aus der jeweiligen GeoJSON-Datei übernommen. Sollten für die Suchanfragen keine Produkte existieren, wird die Anwendung beendet, da es keine Basis gibt, auf der das Netzwerk trainiert werden kann. Eventuell muss bei so einem Fall der Zeitraum erweitert und Prozess wiederholt werden. Bei vorhandenen Produkten lädt das Skript diese herunter. Die Produkte werden in einem komprimierten Format geliefert und enthalten neben zusätzlichen Informationen, Banddaten in separaten Dateien im JPEG2000-Format\footnote{JPEG 2000 genau wie GeoTIFF ist ein Bildformat in dem auch Metadaten abgelegt werden können. So sind Pixel geografischen Koordinaten zuordbar.}.
-\\\\
-Für jedes Produkt, das zur aktuellen Annotation gehört, wird ein neuer Eintrag zu einer \textit{FeatureCollection} hinzugefügt. Zusätzlich wird eine \textit{UUID} (Universally Unique Identifier) generiert und zusammen mit dem Dateinamen der Produktes in den Metadaten gespeichert. Für die spätere Entwicklung sind die Annotationen leichter zu finden und bearbeitbar. Außerdem bleiben dadurch die Originaldaten unberührt. Dieser Schritt wird für jede vorhandene Annotationsdatei wiederholt. Anschließend werden die Bilddateien für B4 und B8 aus dem Produkt extrahiert.
-
 \section{Aufbereitung der Sentineldaten}
+
+Originale Sentinel-2-Aufnahmen haben eine Größe von $10980*10980$ px und müssen deshalb deutlich verkleinert werden, um Speicherressourcen zu minimieren. Vor allem da nur kleine Ausschnitte von wenigen Pixeln benötigt werden. 
+\\\\
+Zu Beginn werden alle Elemente aus der vorher erstellten \textit{FeatureCollection} geladen und nacheinander bearbeitet. Jedes Produkt hat ein eigenes Koordinatenreferenzsystem (CRS, Coordinate Reference System) und unter Umständen unterscheiden sich die Systeme des Produktes und des Polygons\footnote{Nach RFC 7946 ist das geografische Referenzsystem \textit{World Geodetic
+ System 1984} (WGS 84) das Standardsystem.\cite{ref:rfc7946}}. Diese müssen gleich sein, um miteinander agieren zu können. Das Produkt-CRS kann aus den extrahierten Bändern gelesen und dann dazu genutzt werden, um die Annotationskoordinaten in eben dieses zu projizieren.
+ \\\\
+ Nachdem abgesichert wurde, dass die RoI in dem Sentinelprodukt enthalten ist, wird aus den Bändern die RoI samt einem vorher definierten Rand ausgeschnitten. Der Rand ist später bei der Data Augmentation hilfreich. Gleichzeitig erstellt die Anwendung eine gleich große binäre Maske, wobei die Elemente der Maske mit den Pixeln der RoI korrespondieren. Die Elemente, die die RoI repräsentieren, enthalten einen wahren Wert.
+ \\\\
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=3cm]{pics/b4.PNG}
+  \includegraphics[height=3cm]{pics/b8.PNG}
+  \includegraphics[height=3cm]{pics/ndvi.PNG}
+  \caption[B4 - B8 - NDVI]{V.l.n.r. B4 (RED), B8 (NIR), NDVI}
+  \label{fig:ndvi}
+\end{figure}
+\noindent
+Nun wird der NDVI aus den B4- und B8-Ausschnitten, wie in Kapitel \ref{sec:ndvi} gezeigt, berechnet (s. Abb. \ref{fig:ndvi}). Das Ergebnis wird nun mittels Data Augmentation vervielfältigt. Dazu wird es vier mal um 90\degree gedreht. Danach wird jedes rotierte Bild horizontal und vertikal gespiegelt. Darauf werden zehn mal aus den rotierten und gespiegelten Daten zufällig Bilder in der Größe von $16*16$ px ausgeschnitten. Durch diese Operationen vergrößert sich die Grundgesamtheit um den Faktor 80. Jede Operation wird ebenfalls auf die entsprechende Maske angewandt.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=0.95\textheight]{pics/create-ndvi.png}
+  \caption{Ablaufdiagramm der Aufbereitung}
+  \label{fig:create-ndvi}
+\end{figure}
+
+\section{Trainings- und Validierungsdatensatz}
