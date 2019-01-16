@@ -52,7 +52,7 @@ Als Format dieser Informationen dient \textit{GeoJSON}\footnote{GeoJSON ist eine
 	\item \texttt{NOW-<n>DAY(S)} (oder \texttt{HOUR(S)}, \texttt{MONTH(S)}, usw.)
 	\item \texttt{NOW+<n>DAY(S)}
 	\item \texttt{yyyy-MM-ddThh:mm:ssZ-<n>DAY(S)}
-	\item \texttt{NOW/DAY} (oder \texttt{HOUR}, \texttt{MONTH} usw.) - Der Wert wird auf den jeweiligen Typ (z.B. auf den Tag) gerundet.
+	\item \texttt{NOW/DAY} (oder \texttt{HOUR}, \texttt{MONTH} usw.) - Der Wert wird entsprechend (z.B. auf den Tag) gerundet.
 \end{itemize}
 \noindent
 Es ist angebracht einen Zeitraum von mehreren Tagen bzw. Wochen zu wählen, da die Sentinel-2-Satelliten keine täglichen Daten liefern und weil eine Infektion typischerweise über einen längeren Zeitraum vorherrscht. Die Zeitspanne ist von der Krankheit abhängig. Hier wurden eine Woche vor und nach dem Aufnahmezeitpunkt genutzt, um nach Produkten zu suchen.
@@ -68,7 +68,7 @@ Für jedes Produkt, das zur aktuellen Annotation gehört, wird ein neuer Eintrag
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[height=\textheight-31pt]{pics/get-products.png}
+  \includegraphics[height=0.6\textheight, width=.6\textwidth]{pics/get-products.png}
   \caption{Ablaufdiagramm der Beschaffung der Sentinelprodukte}
   \label{fig:get-products}
 \end{figure}
@@ -91,13 +91,43 @@ Zu Beginn werden alle Elemente aus der vorher erstellten \textit{FeatureCollecti
   \label{fig:ndvi}
 \end{figure}
 \noindent
-Nun wird der NDVI aus den B4- und B8-Ausschnitten, wie in Kapitel \ref{sec:ndvi} gezeigt, berechnet (s. Abb. \ref{fig:ndvi}). Das Ergebnis wird nun mittels Data Augmentation vervielfältigt. Dazu wird es vier mal um 90\degree gedreht. Danach wird jedes rotierte Bild horizontal und vertikal gespiegelt. Darauf werden zehn mal aus den rotierten und gespiegelten Daten zufällig Bilder in der Größe von $16*16$ px ausgeschnitten. Durch diese Operationen vergrößert sich die Grundgesamtheit um den Faktor 80. Jede Operation wird ebenfalls auf die entsprechende Maske angewandt.
+Nun wird der NDVI aus den B4- und B8-Ausschnitten, wie in Kapitel \ref{sec:ndvi} gezeigt, berechnet (s. Abb. \ref{fig:ndvi}). Das Ergebnis wird nun mittels Data Augmentation vervielfältigt. Dazu wird es vier mal um 90\degree gedreht. Danach wird jedes rotierte Bild horizontal und vertikal gespiegelt. Darauf werden zehn mal aus den rotierten und gespiegelten Daten zufällig Bilder in der Größe von $16*16$ px ausgeschnitten. Durch diese Operationen vergrößert sich die Grundgesamtheit um den Faktor 80. Jede Operation wird ebenfalls auf die entsprechende Maske angewandt. Dabei wird darauf geachtet, dass die Maske nicht vollständig aus falschen Werten besteht und dass die manipulierten Dateien ebenfalls der \textit{FeatureCollection} hinzugefügt werden.
 
 \begin{figure}[ht]
   \centering
-  \includegraphics[height=0.95\textheight]{pics/create-ndvi.png}
+  \includegraphics[height=0.6\textheight,width=0.25\textwidth]{pics/create-ndvi.png}
   \caption{Ablaufdiagramm der Aufbereitung}
   \label{fig:create-ndvi}
 \end{figure}
 
 \section{Trainings- und Validierungsdatensatz}
+
+Die berechneten NDVI-Bilddateien und deren Masken bilden die Gesamtheit des Datensatzes. Um das Modell trainieren und testen zu können, muss diese Gesamtheit aufgeteilt werden. 
+\begin{itemize}
+	\item Trainingsdatensatz \\
+		Hiermit werden die Gewichte des neuronalen Netzwerkes trainiert.
+	\item Validierungsdatensatz \\ 
+		Dieser Datensatz wird genutzt, um das trainierende Modell wiederholt zu evaluieren. Die Parameter in dem Modell werden auf Basis dieser Evaluation verändert, um das Idealergebnis zu approximieren.
+	\item Testdatensatz \\
+		Während der Validierungsdatensatz während des Trainings genutzt wird, ist der Testdatensatz zu Evaluation des fertig trainierten Modells geeignet. Das KNN sieht also die Elemente nicht während des Trainingprozesses und repräsentiert "`fremde"' Daten. Damit ist der Testdatensatz ein besserer Indikator der Leistung des Modells als der Validierungsdatensatz.
+\end{itemize}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=.9\textwidth]{pics/data-split.png}
+  \caption{Darstellung der relativen Datensatzaufteilung\cite{ref:dataset}}
+  \label{fig:split}
+\end{figure}
+\noindent
+In welchem Verhältnis die Datensätze aufgeteilt werden, hat einen Einfluss auf das Training und hängt von der eigentlichen Größe des gesamten Datensatz und von dem trainierten Modell ab. Komplexere Modelle benötigen einen größeren Validierungsdatensatz, während ein Modell mit weniger Parametern mit einem kleinen auskommt.\cite{ref:dataset} Typischerweise besteht jedoch der Trainingsdatensatz aus dem größten Teil. 
+\\\\
+Hier wird zunächst die Gesamtmenge zwischen einem temporären Teil ($80\%$ der Gesamtheit) und dem Testdatensatz ($20\%$ der Gesamtheit) aufgeteilt. Danach teilt sich der temporäre Teil in den Trainingsdatensatz ($80\%$ des Teiles) und in den Validierungsdatensatz ($20\%$ des Teiles). Das hier angewandte prozentualen Werte sind häufig angewandte initiale Verhältnisse und können bei Bedarf angepasst werden.
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=0.5\textheight,width=0.2\textwidth]{pics/create-sets.png}
+  \caption{Ablaufdiagramm der Datensatzaufteilung}
+  \label{fig:create-ndvi}
+\end{figure}
+
+\section{Training}

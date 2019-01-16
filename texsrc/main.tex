@@ -23,6 +23,7 @@
 \usepackage{booktabs} %entzerrt die Tabellenzeilen und bietet verschieden dicke Unterteilungslinien
 \usepackage{longtable} % Tabellen können sich nicht über mehrere Seiten 
 \usepackage{graphicx} % kann LaTeX Grafiken einbinden
+\usepackage{abstract}
 
 \usepackage{amsmath}
 \usepackage{gensymb}
@@ -34,7 +35,7 @@
 \usepackage{fix-cm}
 \usepackage{hyperref} % verwandelt alle Kapitelüberschriften, Verweise aufs Literaturverzeichnis und andere Querverweise in PDF-Hyperlinks
 \usepackage{color}
-\usepackage{url}
+\PassOptionsToPackage{hyphens}{url}
 
 % Für Literaturnachweise
 \usepackage{csquotes}
@@ -103,12 +104,13 @@
 
 
 %----------------- DECKBLATT -----------------%
- % \include{title}
+\include{title}
  
- 
+ %----------------- ABSTRAKT -----------------%
+\include{abstract}
  
 %----------------- VERZEICHNISSE -----------------%
-%\tableofcontents % Inhaltverzeichnis
+\tableofcontents % Inhaltverzeichnis
 
 %----------------- INHALT -----------------%
 \include{methods}
@@ -116,20 +118,11 @@
 \include{concept}
 
 % ----- Abbildungen ----- %
-%\addcontentsline{toc}{section}{Abbildungsverzeichnis} % falls in Inhalsverzeichnis
-%\listoffigures
+\listoffigures
+
 
 % ----- Tabellen----- %
-% \addcontentsline{toc}{section}{Tabellenverzeichnis}  % falls in Inhalsverzeichnis
-% \fancyhead[L]{Abbildungsverzeichnis / Abkürzungsverzeichnis} %Kopfzeile linksx
-% \listoftables
-
-% ----- Listings ----- %
-% Listingverzeichnis soll im Inhaltsverzeichnis auftauchen
-%\addcontentsline{toc}{section}{Listingverzeichnis}
-%\fancyhead[L]{Abbildungs- / Tabellen- / Listingverzeichnis} %Kopfzeile links
-%\renewcommand{\lstlistlistingname}{Listingverzeichnis}
-%\lstlistoflistings
+\listoftables
 
 \pagestyle{plain} % zurueck setzen von roemische seitenanzahl
 
@@ -140,6 +133,6 @@
 	
 % ----- Listings ----- %
 
-%\include{statement}
+\include{statement}
 
 \end{document}
