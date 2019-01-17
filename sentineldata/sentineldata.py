@@ -47,18 +47,8 @@ def download_sentinel_products_for_ROI(geojson_file):
     if len(products) > 0:
         print("Found {} Products, downloading {} GB".format(len(products), api.get_products_size(products)))
     elif len(products) == 0:
-        # if no products found, search for all avaivable products regardsless of cloudcoverage
-        products = api.query(footprint,
-                             date=(date + "-" + incubation, date),
-                             platformname="Sentinel-2",
-                             filename="S2A_*",
-                             area_relation="intersects")
-
-        if len(products) == 0:
-            print("Found no products for specified search terms.")
-        else:
-            sorted_products = sorted([product["cloudcoverpercentage"] for product in products.values()], reverse=True)
-            print("Found {} products with max. cloud coverage of {} %%".format(len(products), sorted_products[0]))
+        print("Found no products for specified search terms.")
+        exit(0)
 
     if not os.path.exists(SENTINELPRODUCTS_DIR):
         os.makedirs(SENTINELPRODUCTS_DIR)
@@ -202,8 +192,8 @@ def create_ndvi_rois():
                 pixel_size_y = abs(red.transform[4])
 
                 # target pixel size
-                dim_x = 64 * pixel_size_x
-                dim_y = 64 * pixel_size_y
+                dim_x = 32 * pixel_size_x
+                dim_y = 32 * pixel_size_y
 
                 # create bounding box with a margin
                 min_x = projected_geom.bounds.minx
@@ -286,6 +276,9 @@ def create_ndvi_rois():
 
                     for random_crop_count in range(1,10):
                         cropped_ndvi, cropped_mask = random_crop(mod_ndvi, mod_mask, (16, 16))
+                        # ensure mask has true values
+                        if True not in cropped_mask:
+                            continue
                         # persist ndvi and mask for training step
                         profile.update({"driver": "GTiff",
                                         "dtype": rasterio.float32,

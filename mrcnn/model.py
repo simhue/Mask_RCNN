@@ -2953,6 +2953,10 @@ class MeanAveragePrecisionCallback(Callback):
             # Compute mAP - VOC uses IoU 0.5
             AP, _, _, _ = utils.compute_ap(gt_bbox, gt_class_id, gt_mask, r["rois"],
                                            r["class_ids"], r["scores"], r['masks'])
+
+            if math.isnan(AP):
+                print("blaah")
+
             mAPs.append(AP)
 
         return np.array(mAPs)
