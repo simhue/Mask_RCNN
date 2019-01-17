@@ -86,6 +86,8 @@ class CropDiseaseConfig(Config):
 
     MEAN_PIXEL = np.array([52, 52, 52])
 
+    LEARNING_RATE = 0.02
+
 
 class InferenceConfig(CropDiseaseConfig):
     IMAGES_PER_GPU = 1
