@@ -46,7 +46,7 @@ def download_sentinel_products_for_ROI(geojson_file):
                          )
     if len(products) > 0:
         print("Found {} Products, downloading {} GB".format(len(products), api.get_products_size(products)))
-    else:
+    elif len(products):
         print("Found no products for specified search terms.")
         exit(0)
 
@@ -274,10 +274,11 @@ def create_ndvi_rois():
                         mod_ndvi = np.flip(mod_ndvi, axis)
                         mod_mask = np.flip(mod_mask, axis)
 
-                    for random_crop_count in range(1):
-                        #cropped_ndvi, cropped_mask = random_crop(mod_ndvi, mod_mask, (32, 32))
-                        cropped_ndvi = mod_ndvi
-                        cropped_mask = mod_mask
+                    for random_crop_count in range(1,10):
+                        cropped_ndvi, cropped_mask = random_crop(mod_ndvi, mod_mask, (16, 16))
+                        # ensure mask has true values
+                        if True not in cropped_mask:
+                            continue
                         # persist ndvi and mask for training step
                         profile.update({"driver": "GTiff",
                                         "dtype": rasterio.float32,

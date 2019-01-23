@@ -65,7 +65,7 @@ class CropDiseaseConfig(Config):
     # Give the configuration a recognizable name
     NAME = "crop-disease"
 
-    IMAGES_PER_GPU = 1
+    IMAGES_PER_GPU = 4
 
     # Number of classes (including background)
     # TODO: Dynamic number of classes
@@ -73,7 +73,7 @@ class CropDiseaseConfig(Config):
 
     # Number of training steps per epoch
     # TODO: Dynamic steps per epoch
-    STEPS_PER_EPOCH = 144
+    STEPS_PER_EPOCH = int(414 / IMAGES_PER_GPU)
 
     RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128)
 
@@ -230,17 +230,17 @@ def train(model):
     for i, info in enumerate(dataset_train.class_info):
         print("{:3}. {:50}".format(i, info['name']))
         
-    image_ids = np.random.choice(dataset_train.image_ids, 4)
-    for image_id in image_ids:
-        image = dataset_train.load_image(image_id)
-        mask, class_ids = dataset_train.load_mask(image_id)
-        # visualize.display_top_masks(image, mask, class_ids, dataset_train.class_names)
-        visualize.display_instances(image,
-                                    np.array([[ 0,  1, 41, 55]]),
-                                    mask, class_ids,
-                                    ["BG", "mask"],
-                                    scores=[1.0],
-                                    show_bbox=False)
+    # image_ids = np.random.choice(dataset_train.image_ids, 4)
+    # for image_id in image_ids:
+    #     image = dataset_train.load_image(image_id)
+    #     mask, class_ids = dataset_train.load_mask(image_id)
+    #     # visualize.display_top_masks(image, mask, class_ids, dataset_train.class_names)
+    #     visualize.display_instances(image,
+    #                                 np.array([[ 0,  1, 41, 55]]),
+    #                                 mask, class_ids,
+    #                                 ["BG", "mask"],
+    #                                 scores=[1.0],
+    #                                 show_bbox=False)
 
 
     # Validation dataset
@@ -280,8 +280,8 @@ def train(model):
     print("Start training")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE,
-                epochs=25,
-                layers='heads',
+                epochs=100,
+                layers='all',
                 custom_callbacks=[val_map_callback, test_map_callback, train_map_callback])
     
 
@@ -409,13 +409,13 @@ if __name__ == '__main__':
 
         image_ids = dataset_test.image_ids
         np.random.shuffle(image_ids)
-        # for image_id in image_ids[:10]:
-        #     detect(model, dataset_test, image_id)
+        for image_id in image_ids[:10]:
+             detect(model, dataset_test, image_id)
 
-        detect_image(model, "ndvi.tif")
-        detect_image(model, "ndvi-2.tif")
-        detect_image(model, "ndvi-3.tif")
-        detect_image(model, "ndvi-4.tif")
+        # detect_image(model, "ndvi.tif")
+        # detect_image(model, "ndvi-2.tif")
+        # detect_image(model, "ndvi-3.tif")
+        # detect_image(model, "ndvi-4.tif")
     else:
         print("'{}' is not recognized. "
               "Use 'train' or 'detect'".format(args.command))
