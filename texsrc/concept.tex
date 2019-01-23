@@ -100,7 +100,7 @@ Nun wird der NDVI aus den B4- und B8-Ausschnitten, wie in Kapitel \ref{sec:ndvi}
   \label{fig:create-ndvi}
 \end{figure}
 
-\section{Trainings- und Validierungsdatensatz}
+\section{Trainings- und Validierungsdatensatz}\label{sec:dataset}
 
 Die berechneten NDVI-Bilddateien und deren Masken bilden die Gesamtheit des Datensatzes. Um das Modell trainieren und testen zu können, muss diese Gesamtheit aufgeteilt werden. 
 \begin{itemize}
@@ -115,13 +115,13 @@ Die berechneten NDVI-Bilddateien und deren Masken bilden die Gesamtheit des Date
 \begin{figure}[ht]
   \centering
   \includegraphics[width=.9\textwidth]{pics/data-split.png}
-  \caption{Darstellung der relativen Datensatzaufteilung\cite{ref:dataset}}
+  \caption[Datensatzverteilung]{Darstellung der relativen Datensatzverteilung\cite{ref:dataset}}
   \label{fig:split}
 \end{figure}
 \noindent
-In welchem Verhältnis die Datensätze aufgeteilt werden, hat einen Einfluss auf das Training und hängt von der eigentlichen Größe des gesamten Datensatz und von dem trainierten Modell ab. Komplexere Modelle benötigen einen größeren Validierungsdatensatz, während ein Modell mit weniger Parametern mit einem kleinen auskommt.\cite{ref:dataset} Typischerweise besteht jedoch der Trainingsdatensatz aus dem größten Teil. 
+In welchem Verhältnis die Datensätze aufgeteilt werden, hat einen Einfluss auf das Training und hängt von der eigentlichen Größe des gesamten Datensatz und von dem trainierten Modell ab. Komplexere Modelle benötigen einen größeren Validierungsdatensatz, während ein Modell mit weniger Parametern mit einem kleineren auskommt.\cite{ref:dataset} Typischerweise besteht jedoch der Trainingsdatensatz aus dem größten Teil. 
 \\\\
-Hier wird zunächst die Gesamtmenge zwischen einem temporären Teil ($80\%$ der Gesamtheit) und dem Testdatensatz ($20\%$ der Gesamtheit) aufgeteilt. Danach teilt sich der temporäre Teil in den Trainingsdatensatz ($80\%$ des Teiles) und in den Validierungsdatensatz ($20\%$ des Teiles). Das hier angewandte prozentualen Werte sind häufig angewandte initiale Verhältnisse und können bei Bedarf angepasst werden.
+Hier wird zunächst die Gesamtmenge zwischen einem unbdestimmten Teildatensatz ($80\%$ der Gesamtheit) und dem Testdatensatz ($20\%$ der Gesamtheit) aufgeteilt. Danach teilt sich der Teildatensatz in den Trainingsdatensatz ($80\%$ des Teiles) und in den Validierungsdatensatz ($20\%$ des Teiles). Die hier angewandte prozentualen Werte sind häufig angewandte initiale Verhältnisse und können bei Bedarf angepasst werden. Die geteilten Mengen werden unterschiedlichen Orten abgelegt und für jede Sammlung wird jeweils eine neue \textit{FeatureCollection} erzeugt, die die Annotationen der entsprechenden Elemente enthalten. 
 
 \begin{figure}[ht]
   \centering
@@ -130,4 +130,77 @@ Hier wird zunächst die Gesamtmenge zwischen einem temporären Teil ($80\%$ der 
   \label{fig:create-ndvi}
 \end{figure}
 
-\section{Training}
+\section{Training}\label{sec:training}
+
+Mit den vorbereiteten und aufgeteilten Daten kann nun das Netzwerk angelernt werden. In dieser Arbeit wurde eine Implementierung\footnote{\url{https://github.com/matterport/Mask_RCNN}} des kalifornischen Unternehmens Matterport, Inc. erweitert und genutzt. Matterport stellte den Quellcode 2017 unter MIT-Lizenz der Öffentlichkeit zur freien Verfügung. Das neuronale Netz wurde mittels Python 3, Tensorflow und Keras implementiert. Zum Training eigener Daten müssen die zwei Python-Basisklassen \texttt{Dataset} und \texttt{Config} erweitert werden. 
+
+\subsubsection{Dataset}
+
+Die Klasse \texttt{Dataset} bietet einen Weg, eigene Datensätze in das Modell zu laden, da die Daten in unterschiedlichen Formaten vorkommen können. Für die Erweiterung erbt die neue Klasse \texttt{CropDiseaseDataset} von \texttt{Dataset} und überschreibt die Methoden \texttt{Dataset.load\_mask}, \texttt{Dataset.load\_image} und \texttt{Dataset.image\_reference}. Zusätzlich wurde die Methode \texttt{CropDiseaseDataset.load\_crop\_disease} implementiert. Eine Instanz von \texttt{Dataset} bzw. \texttt{CropDiseaseDataset} bildet nicht die gesamte Datenmenge ab, sondern jeweils einen spezifizierten Subdatensatz, die in Kapitel \ref{sec:dataset} definiert wurden. So muss jeder Teil separat instanziiert werden. 
+\\\\
+\texttt{CropDiseaseDataset.load\_crop\_disease} fügt dem Objekt die Klassen- bzw. Bildinformationen wie eindeutige Bezeichnung und Dateipfad durch die internen Methoden \texttt{Dataset.add\_class} bzw. \texttt{Dataset.add\_image} hinzu. 
+\\\\
+\texttt{CropDiseaseDataset.load\_image} lädt die eigentliche Bilddatei in den Arbeitsspeicher. Die NDVI-Werte wurden als Grauskalenbilder gespeichert und müssen in ein RGB-Format konvertiert werden. Es ist möglich durch Anpassungen des Mask RCNN-Codes, auch Dateien mit mehr oder weniger als drei Farbkanälen zu nutzen. Jedoch verursachte das Fehler, die zum Zeitpunkt der Verschriftlichung nicht gelöst wurde. Da es sich dabei um keinen kritischen Fehler handelt, wurde dieser durch die Konvertierung umgangen. Da die NDVI-Werte zwischen $-1$ und $1$ liegen und Farbwerte aus ganzzahligen Werten bestehen, werden die NDVI-Werte mit $255$ multipliziert, bevor sie schließlich hinzugefügt werden.
+\\\\
+\texttt{CropDiseaseDataset.load\_mask} liest die binären Masken aus den Dateien und ordnet sie einer Klasse und einem Bild zu. 
+\\\\
+Die Methode \texttt{CropDiseaseDataset.image\_reference} gibt den vollständigen Dateipfad einer Bilddatei zurück.
+
+\subsubsection{Config}
+
+Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfiguration des Modells genutzt werden. Diese Parameter können entsprechend angepasst werden und haben jeweils Einfluss auf das Training bzw. auf die Erkennung. Es wird hier nur auf die Parameter eingegangen, die explizit im Rahmen der Entwicklung verändert wurden, um das Ergebnis des Trainings zu verbessern. Die Parameterbezeichnung ist der Name des Parameters, so wie er in \texttt{Config} deklariert wurde. Die Erklärung beschreibt den Parameter näher. Die angegebenen Werte sind alle möglichen Werte, die in der Entwicklung genutzt wurden. Welche Werte bei welchem Trainingsdurchlauf genutzt wurden, wird im Kapitel \ref{sec:experiments} beschrieben.
+\\\\
+\noindent
+\textbf{Parameterbezeichnung:} BACKBONE\\
+\textbf{Erklärung:} Die Backbone-Architektur mit der das Modell gebildet wird.\\
+\textbf{Werte:} resnet50\\
+
+\noindent
+\textbf{Parameterbezeichnung:} DETECTION\_MIN\_CONFIDENCE\\
+\textbf{Erklärung:} Minimalste Wahrscheinlichkeit einer Detektion, um sich als vorhergesagte Instanz zu qualifizieren. Detektionen mit einer Wahrscheinlichkeit niedriger als dieser Wert werden ignoriert.\\
+\textbf{Werte:} 0\\
+
+\noindent
+\textbf{Parameterbezeichnung:} IMAGE\_MAX\_DIM\\
+\textbf{Erklärung:} Wichtig für \texttt{IMAGE\_RESIZE\_MODE}. Bildhöhe und -breite werden auf diesen Wert vergrößert.\\
+\textbf{Werte:} 128 (in px)\\
+
+\noindent
+\textbf{Parameterbezeichnung:} IMAGE\_RESIZE\_MODE\\
+\textbf{Erklärung:} Methode mit der ein Bild vergrößert bzw. verkleinert wird. Die gewählte Option vergrößert die Datensätze auf \texttt{IMAGE\_MAX\_DIM}$*$\texttt{IMAGE\_MAX\_DIM} und füllt das Bild mit 0-Werten, sollte das Ausgangsbild kein Quadrat sein.\\
+\textbf{Werte:} square\\
+
+\noindent
+\textbf{Parameterbezeichnung:} IMAGES\_PER\_GPU\\
+\textbf{Erklärung:} Bilder die pro Schritt gleichzeitig für das Training in den Speicher geladen werden. Dieser Wert ist - je nachdem man auf der CPU oder auf der GPU trainiert - abhängig von der Größe der Arbeitsspeichers oder Grafikspeichers. Für die Detektion ist nur ein Bild pro Schritt erlaubt.\\
+\textbf{Werte:} 1, 4\\
+
+\noindent
+\textbf{Parameterbezeichnung:} LEARNING\_RATE\\
+\textbf{Erklärung:} \\
+\textbf{Werte:}\\
+
+\noindent
+\textbf{Parameterbezeichnung:} NUM\_CLASSES\\
+\textbf{Erklärung:} Die Anzahl der Klassen, die trainiert werden. Hier ist darauf zu achten, dass der Hintergrund als eigene Klasse gesehen wird, auch wenn diese nicht explizit definiert wird. Daher muss die zusätzliche Klasse mit in diesen Wert einberechnet werden.\\
+\textbf{Werte:} 2\\
+
+\noindent
+\textbf{Parameterbezeichnung:} RPN\_ANCHOR\_SCALES\\
+\textbf{Erklärung:} \\
+\textbf{Werte:} \\
+
+\noindent
+\textbf{Parameterbezeichnung:} STEPS\_PER\_EPOCH\\
+\textbf{Erklärung:} \\
+\textbf{Werte:}\\
+
+\noindent
+\textbf{Parameterbezeichnung:} USE\_MINI\_MASK\\
+\textbf{Erklärung:}\\
+\textbf{Werte:}\\
+
+\noindent
+\textbf{Parameterbezeichnung:} WEIGHT\_DECAY\\
+\textbf{Erklärung:}\\
+\textbf{Werte:}\\

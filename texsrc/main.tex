@@ -104,7 +104,7 @@
 
 
 %----------------- DECKBLATT -----------------%
-\include{title}
+%\include{title}
  
  %----------------- ABSTRAKT -----------------%
 \include{abstract}
@@ -113,6 +113,7 @@
 \tableofcontents % Inhaltverzeichnis
 
 %----------------- INHALT -----------------%
+\pagestyle{plain} % zurueck setzen von roemische seitenanzahl
 \include{methods}
 \include{overfitting}
 \include{concept}
@@ -123,8 +124,6 @@
 
 % ----- Tabellen----- %
 \listoftables
-
-\pagestyle{plain} % zurueck setzen von roemische seitenanzahl
 
 
 %\printbibliography

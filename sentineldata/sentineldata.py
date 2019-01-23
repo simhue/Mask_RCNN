@@ -41,24 +41,14 @@ def download_sentinel_products_for_ROI(geojson_file):
     # Config file?
 
     products = api.query(footprint,
-                         date=(date + "-" + incubation, date),
+                         date=("2018-07-12T13:00:00Z-7DAYS", "2018-07-12T13:00:00Z+7DAYS"),
                          platformname="Sentinel-2"
                          )
     if len(products) > 0:
         print("Found {} Products, downloading {} GB".format(len(products), api.get_products_size(products)))
-    elif len(products) == 0:
-        # if no products found, search for all avaivable products regardsless of cloudcoverage
-        products = api.query(footprint,
-                             date=(date + "-" + incubation, date),
-                             platformname="Sentinel-2",
-                             filename="S2A_*",
-                             area_relation="intersects")
-
-        if len(products) == 0:
-            print("Found no products for specified search terms.")
-        else:
-            sorted_products = sorted([product["cloudcoverpercentage"] for product in products.values()], reverse=True)
-            print("Found {} products with max. cloud coverage of {} %%".format(len(products), sorted_products[0]))
+    else:
+        print("Found no products for specified search terms.")
+        exit(0)
 
     if not os.path.exists(SENTINELPRODUCTS_DIR):
         os.makedirs(SENTINELPRODUCTS_DIR)
@@ -202,8 +192,8 @@ def create_ndvi_rois():
                 pixel_size_y = abs(red.transform[4])
 
                 # target pixel size
-                dim_x = 64 * pixel_size_x
-                dim_y = 64 * pixel_size_y
+                dim_x = 32 * pixel_size_x
+                dim_y = 32 * pixel_size_y
 
                 # create bounding box with a margin
                 min_x = projected_geom.bounds.minx
@@ -270,7 +260,7 @@ def create_ndvi_rois():
 
             # rotate 36 times
             # for i in np.random.choice(np.arange(360), 36, replace=False):
-            for i_rotations in range(4):
+            for i_rotations in range(1):
                 # original, mirrored by x and mirrored by y
                 for axis in range(-1, 2):
 
@@ -284,8 +274,10 @@ def create_ndvi_rois():
                         mod_ndvi = np.flip(mod_ndvi, axis)
                         mod_mask = np.flip(mod_mask, axis)
 
-                    for random_crop_count in range(1,10):
-                        cropped_ndvi, cropped_mask = random_crop(mod_ndvi, mod_mask, (16, 16))
+                    for random_crop_count in range(1):
+                        #cropped_ndvi, cropped_mask = random_crop(mod_ndvi, mod_mask, (32, 32))
+                        cropped_ndvi = mod_ndvi
+                        cropped_mask = mod_mask
                         # persist ndvi and mask for training step
                         profile.update({"driver": "GTiff",
                                         "dtype": rasterio.float32,
@@ -294,10 +286,10 @@ def create_ndvi_rois():
                                         "transform": red_bb_transform})
 
                         new_feature = copy.deepcopy(feature)
-                        new_feature.properties["id"] = str(uuid.uuid4())
+                        # new_feature.properties["id"] = str(uuid.uuid4())
 
-                        ndvi_file = os.path.join(NDVI_DIR, new_feature.properties["id"] + ".tif")
-                        mask_file = os.path.join(NDVI_DIR, new_feature.properties["id"] + ".mask")
+                        ndvi_file = os.path.join(NDVI_DIR, new_feature.properties["sentinelproduct"] + ".tif")
+                        mask_file = os.path.join(NDVI_DIR, new_feature.properties["sentinelproduct"] + ".mask")
 
                         with rasterio.open(ndvi_file, "w", **profile) as dst:
                             dst.write(np.array([cropped_ndvi]))
@@ -379,4 +371,4 @@ unzip_sentinel_products()
 
 create_ndvi_rois()
 
-create_training_sets()
+# create_training_sets()
