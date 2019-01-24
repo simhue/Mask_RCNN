@@ -162,8 +162,8 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 
 \noindent
 \textbf{Parameterbezeichnung:} IMAGE\_MAX\_DIM\\
-\textbf{Erklärung:} Wichtig für \texttt{IMAGE\_RESIZE\_MODE}. Bildhöhe und -breite werden auf diesen Wert vergrößert.\\
-\textbf{Werte:} 128 (in px)\\
+\textbf{Erklärung:} Wichtig für \texttt{IMAGE\_RESIZE\_MODE}. Bildhöhe und -breite werden auf diesen Wert (in px) vergrößert.\\
+\textbf{Werte:} 128\\
 
 \noindent
 \textbf{Parameterbezeichnung:} IMAGE\_RESIZE\_MODE\\
@@ -173,12 +173,12 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 \noindent
 \textbf{Parameterbezeichnung:} IMAGES\_PER\_GPU\\
 \textbf{Erklärung:} Bilder die pro Schritt gleichzeitig für das Training in den Speicher geladen werden. Dieser Wert ist - je nachdem man auf der CPU oder auf der GPU trainiert - abhängig von der Größe der Arbeitsspeichers oder Grafikspeichers. Für die Detektion ist nur ein Bild pro Schritt erlaubt.\\
-\textbf{Werte:} 1, 4\\
+\textbf{Werte:} $1$, $4$\\
 
 \noindent
 \textbf{Parameterbezeichnung:} LEARNING\_RATE\\
-\textbf{Erklärung:} \\
-\textbf{Werte:}\\
+\textbf{Erklärung:} Die Lernrate gibt an, wie stark die Gewichte des Netzwerkes korrigiert werden. Wenn dieser Wert zu klein ist, kann die Konvergenz zum Ideal sehr lange dauern. Ein zu hoher Wert kann das Ideal überschießen oder sogar dafür sorgen, dass die Lernkurve divergiert. He et al. nutzen in ihrer Ausarbeitung einen Wert von $0.02$.\cite{ref:maskrcnn} Dieser sorgt jedoch laut den Entwicklern von Matterport zu einem explosionartigen Anstieg der Gewichte, weswegen sie sich für $0.001$ entschieden haben.\cite{ref:matterport} Hier werden beide Werte untersucht.\\
+\textbf{Werte:}$0.001$, $0.2$\\
 
 \noindent
 \textbf{Parameterbezeichnung:} NUM\_CLASSES\\
@@ -192,15 +192,16 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 
 \noindent
 \textbf{Parameterbezeichnung:} STEPS\_PER\_EPOCH\\
-\textbf{Erklärung:} \\
-\textbf{Werte:}\\
+\textbf{Erklärung:} Anzahl der Trainingsschritte bis eine Epoche abgeschlossen ist. Der Wert ist abhängig von der Größe des Trainingdatensatzes und wie viele Bilder pro Schritt prozessiert werden.\\
+\textbf{Werte:} $\frac{SIZE_{Train}}{IMAGES\_PER\_GPU}$\\
 
 \noindent
 \textbf{Parameterbezeichnung:} USE\_MINI\_MASK\\
-\textbf{Erklärung:}\\
-\textbf{Werte:}\\
+\textbf{Erklärung:} Wenn dieser bool'sche Wert wahr ist, werden Instanzmasken zu einer spezifizierten Größe verkleinert. Hier wird das jedoch deaktiviert, da die Eingangsbilder klein genug sind und diese Operation nicht nötig ist.\\
+\textbf{Werte:} \texttt{False}\\
 
 \noindent
 \textbf{Parameterbezeichnung:} WEIGHT\_DECAY\\
-\textbf{Erklärung:}\\
-\textbf{Werte:}\\
+\textbf{Erklärung:} Einflussgröße der L2 Regulization.\\
+\textbf{Werte:} $0.01$, $0.005$, $0.001$\\
+
