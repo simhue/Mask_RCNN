@@ -61,3 +61,12 @@ ENV/
 .metadata/
 .project
 .pydevproject
+
+# tex
+*.aux
+*.bbl
+*.blg
+*.lo*
+*.toc
+*.synctex.gz
+*.out
