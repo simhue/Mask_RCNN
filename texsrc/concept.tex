@@ -130,11 +130,11 @@ Hier wird zunächst die Gesamtmenge zwischen einem unbdestimmten Teildatensatz (
   \label{fig:create-ndvi}
 \end{figure}
 
-\section{Training}\label{sec:training}
+\section{Training/Detektion}\label{sec:training}
 
 Mit den vorbereiteten und aufgeteilten Daten kann nun das Netzwerk angelernt werden. In dieser Arbeit wurde eine Implementierung\footnote{\url{https://github.com/matterport/Mask_RCNN}} des kalifornischen Unternehmens Matterport, Inc. erweitert und genutzt. Matterport stellte den Quellcode 2017 unter MIT-Lizenz der Öffentlichkeit zur freien Verfügung. Das neuronale Netz wurde mittels Python 3, Tensorflow und Keras implementiert. Zum Training eigener Daten müssen die zwei Python-Basisklassen \texttt{Dataset} und \texttt{Config} erweitert werden. 
 
-\subsubsection{Dataset}
+\subsection{Dataset}\label{sub:sec:dataset}
 
 Die Klasse \texttt{Dataset} bietet einen Weg, eigene Datensätze in das Modell zu laden, da die Daten in unterschiedlichen Formaten vorkommen können. Für die Erweiterung erbt die neue Klasse \texttt{CropDiseaseDataset} von \texttt{Dataset} und überschreibt die Methoden \texttt{Dataset.load\_mask}, \texttt{Dataset.load\_image} und \texttt{Dataset.image\_reference}. Zusätzlich wurde die Methode \texttt{CropDiseaseDataset.load\_crop\_disease} implementiert. Eine Instanz von \texttt{Dataset} bzw. \texttt{CropDiseaseDataset} bildet nicht die gesamte Datenmenge ab, sondern jeweils einen spezifizierten Subdatensatz, die in Kapitel \ref{sec:dataset} definiert wurden. So muss jeder Teil separat instanziiert werden. 
 \\\\
@@ -146,7 +146,7 @@ Die Klasse \texttt{Dataset} bietet einen Weg, eigene Datensätze in das Modell z
 \\\\
 Die Methode \texttt{CropDiseaseDataset.image\_reference} gibt den vollständigen Dateipfad einer Bilddatei zurück.
 
-\subsubsection{Config}
+\subsection{Config}
 
 Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfiguration des Modells genutzt werden. Diese Parameter können entsprechend angepasst werden und haben jeweils Einfluss auf das Training bzw. auf die Erkennung. Es wird hier nur auf die Parameter eingegangen, die explizit im Rahmen der Entwicklung verändert wurden, um das Ergebnis des Trainings zu verbessern. Die Parameterbezeichnung ist der Name des Parameters, so wie er in \texttt{Config} deklariert wurde. Die Erklärung beschreibt den Parameter näher. Die angegebenen Werte sind alle möglichen Werte, die in der Entwicklung genutzt wurden. Welche Werte bei welchem Trainingsdurchlauf genutzt wurden, wird im Kapitel \ref{sec:experiments} beschrieben.
 \\\\
@@ -159,6 +159,11 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 \textbf{Parameterbezeichnung:} DETECTION\_MIN\_CONFIDENCE\\
 \textbf{Erklärung:} Minimalste Wahrscheinlichkeit einer Detektion, um sich als vorhergesagte Instanz zu qualifizieren. Detektionen mit einer Wahrscheinlichkeit niedriger als dieser Wert werden ignoriert.\\
 \textbf{Werte:} 0\\
+
+\noindent
+\textbf{Parameterbezeichnung:} GPU\_COUNT\\
+\textbf{Erklärung:} Anzahl der Grafikkarten, auf denen das Modell trainiert wird. Wenn die CPU die Berechnungen übernimmt, muss der Parameter den Wert $1$ annehmen.\\
+\textbf{Werte:} 1\\
 
 \noindent
 \textbf{Parameterbezeichnung:} IMAGE\_MAX\_DIM\\
@@ -205,3 +210,43 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 \textbf{Erklärung:} Einflussgröße der L2 Regulization.\\
 \textbf{Werte:} $0.01$, $0.005$, $0.001$\\
 
+\noindent
+Der Konfigurationsparameter \texttt{BATCH\_SIZE} wird automatisch aus $GPU\_COUNT * IMAGES\_PER\_GPU$ berechnet. Während \texttt{IMAGES\_PER\_GPU} angibt, wie viele Bilder pro Rechnereinheit (GPU oder CPU) in das neuronale Netz geladen werden, definiert \texttt{BATCH\_SIZE} wie viele Bilder insgesamt pro Trainingsschritt geladen werden.
+\\\\
+\texttt{CropDiseaseConfig} erbt von \texttt{Config} und die Werte werden vor jedem erneuten Trainingsdurchlauf verändert und der Modell-Instanz übergeben.  
+
+\subsection{Ablauf}
+
+Die Benutzer können bei Skriptaufruf als Kommandozeilenparameter spezifieren, ob das neuronale Netz trainiert oder ob ein Bild überprüft werden soll. Für beide Fälle müssen sie spezifizieren, auf welcher Basis das neuronale Netz gebildet werden soll. Hier gibt es drei Optionen für diese Anwendung:
+
+\begin{itemize}
+	\item vortrainierte COCO-Gewichte
+	\item vortrainierte ImageNet-Gewichte
+	\item Fortsetzen eines alten Trainingsdurchlaufs
+\end{itemize}
+\noindent
+Wählen die Benutzer eine der ersten beiden Möglichkeiten, werden die vortrainierten Gewichte heruntergeladen. Bei der dritten Option muss eine vorher gespeicherte Datei geladen werden, die die Gewichte des gewünschten Modells enthält. Aus den gewählten Gewichten und dem \texttt{CropDiseaseConfig}-Objekt wird nun eine Mask R-CNN-Instanz gebaut. Dieses Instanz kann eine von zwei Modi 
+\begin{itemize}
+	\item training
+	\item inference
+\end{itemize}
+annehmen. Wobei \textit{training} die Gewichte des Modells für das Training veränderbar macht und \textit{inference} für die Detektion die Gewichte einfriert, da während einer Erkennung nicht trainiert werden.
+
+\subsubsection{training}
+
+Wie in Kapitel \ref{sub:sec:dataset} beschrieben, ist für jeden Subdatensatz jeweils ein unterschiedliches \texttt{CropDiseaseDataset}-Objekt nötig. In den separaten Objekten werden nun die Daten, Klassen und Masken für das Training, die Validierung und das Testen geladen und vorbereitet.
+\\\\
+Das Test-Objekt wird nur indirekt für das Training benutzt. Es hat keinen direkten Einfluss auf den Trainingsverlauf, sondern wird genutzt, um den mAP am Ende jeder Epoche zu berechnen. Hierzu ist eine weitere Mask R-CNN-Instanz im \textit{inference}-Modus notwendig, dessen Gewichte nach jeder Epoche auf die selben Werte des \textit{training}-Modells aktualisiert werden. Die Konfiguration definiert die von \texttt{CropDiseaseConfig} abgeleitete Klasse \texttt{InferenceConfig}. Anders als die Parameter von \texttt{CropDiseaseConfig} werden die Werte nur einmalig festgelegt.
+\begin{lstlisting}[language=python,caption={InferenceConfig},captionpos=b]
+class InferenceConfig(CropDiseaseConfig):
+	# Nur ein Bild pro Detektion erlauben
+	IMAGES_PER_GPU = 1
+	GPU_COUNT = 1
+	# Jede Erkennung wird angezeigt
+	DETECTION_MIN_CONFIDENCE = 0.0
+\end{lstlisting}
+Auf Grund des \textit{inference}-Modells und des Testdatensatzes kann nun am Ende einer Epoche der mAP berechnet werden, mit dessen Hilfe am Ende des Trainings das neuronale Netz evauliert werden kann. Um Vergleichswerte zu haben, wird dieser für Trainings- und Validierungsdatensatz ebenfalls berechnet. 
+\\\\
+Bevor das Training starten kann, müssen noch die Anzahl der Epochen und die trainierbaren Schichten angegeben werden. Die Anzahl der Epochen hat ein Einfluss darauf, wie oft ein Training wiederholt wird. Wird der Wert zu niedrig gewählt, kann es sein, dass die Gewichte nicht ausreichend genug trainiert sind. So riskiert man \textit{Underfitting}. Ist der Wert jedoch zu hoch, werden die Gewichte zu sehr an den Trainingsdatensatz angepasst und ein \textit{Overfitting} ist die Folge. Mit dem \textit{training}-Modus gibt man zwar an, dass die Gewichte variabel sind, aber durch die hier angegeben Schichten wird genau festgelegt, welche Schichten eingefroren werden und welche nicht. So wird mit \texttt{layers='heads'} lediglich der \textit{network head} trainiert, werden alle Schichten mit \texttt{layers='all'} trainierbar sind. Bei einem kleinen Datensatz wäre es zum Beispiel sinnvoll, nur die Klassifikatoren zu trainieren, die sich im Netzwerkkopf befinden. Zusätzlich können verschiedene Schichten iterativ trainiert werden. Zum Beispiel wird in den ersten 20 Epochen der \textit{head} trainiert. Anschließend werden alle Schichten für 80 Epochen trainiert.
+
+\subsubsection{inference}

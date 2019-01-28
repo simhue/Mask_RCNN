@@ -152,3 +152,70 @@ Gleichzeitig werden in einem parallelen Zweig je Bounding Box $k$ $m*n$ große M
 \end{table}
 \noindent
 In \cite{ref:maskrcnn} wird Mask R-CNN mit den \textit{COCO challenge}-Gewinnern\footnote{COCO (Common Objects in Context, dt.: Gewöhnliche Objekte im Kontext) enthält einen Datensatz von über 200000 Bildern in über 80 Kategorien. Der Datensatz ist eine oft genutzte Basis, um Objekterkennungstechniken zu evaluieren und zu bewerten.\cite{ref:coco}} der Jahre 2015 und 2016 verglichen. Der Vergleich zeigt, dass Mask R-CNN in der Challenge bessere Werte erzielt als die Konkurenten (s. Tab. \. Desweiteren fällt \textit{fully convolutional instance segmentation} (FCIS, dt.: vollständig faltende Instanzsegmentierung) auf, wenn es mit überlappenden Objekten konfrontiert wird. Dort erzeugt es Artefakte, welche durch Mask R-CNN nicht entstehen (s. Abb. \ref{fig:maskvsfcis}). Durch diese Gegenüberstellungen wird gezeigt, dass Mask R-CNN alle aufgeführten Anforderungen erzielt. Es erkennt Klasseninstanzen auf Pixelebene und weist eine hohe Robustheit auf. Auch die Genauigkeit hebt sich beim direkten Vergleich ab. Aus diesen Gründen wurde Mask R-CNN im Rahmen diese Arbeit ausgewählt.
+
+\section{Evaluation des Modells}\label{sec:map}
+
+Jetzt wo gezeigt wurde, welches Modell in dieser Arbeit genutzt wird, fehlt eine Möglichkeit ein trainiertes Modell zu bewerten. \textit{Mean average precision} (oder auch mAP) ist eine Metrik, um die Genauigkeit einer Instanzsegmentierung zu messen.\footnote{mAP ist nicht nur auf Instanzsegmentierung limitiert, sondern wird zum Beispiel auch als Metrik in der Objekterkennung genutzt.} Aber bevor die erklärt werden können, muss noch die Begriffe \textit{Precision}, \textit{Recall} und \textit{Intersection over Union} eingegangen werden. 
+
+
+\subsection{Intersection over Union}
+
+\textit{Intersection over Union} (oder auch IoU, dt: Schnitt über Vereinigung) ist eine wichtige Metrik für die semantische Segmentierung. Sie vergleicht die vorhergesagte Maske mit der Grundwahrheit\footnote{Die Grundwahrheit (engl.: ground truth) ist hier die binäre Maske, die die infizierte Fläche repräsentiert.}, um zu messen wie gut die Vorhersage mit der Grundwahrheit übereineinstimmt.\cite{ref:map}
+
+\begin{equation}\label{equation:recall}
+  IoU = \frac{Grundwahrheit\cap Vorhersage}{Grundwahrheit\cup Vorhersage}
+\end{equation}
+\noindent
+Die Schnittmenge beinhaltet alle Pixel, die sich in der Grundwahrheit als auch in der vorhergesagten Maske befinden. Pixel, die sich in der Grundwahrheit und in der Vorhersage befinden, werden von der Vereinigung zusammengefasst. 
+\\\\
+\begin{figure}[ht]
+  \centering
+  \includegraphics[width=\textwidth]{pics/iou.PNG}
+  \caption[IoU]{Beispiel Intersection over Union, Grundwahrheit in blau, Vorhersage in rot\cite{ref:map}}
+  \label{fig:iou}
+\end{figure}
+\noindent
+In der semantischen Segmentierung wird für jede Klasse ein unterschiedlicher IoU-Wert berechnet und dann wird der Mittelwert aus diesen Werten ermittelt, um einen globalen Messwert zu haben. In der Instanzsegmenierung wird für jede einzelne Objektinstanz mittels Instanzgrundwahrheit und Instanzvorhersage ein separater IoU-Wert berechnet. Wenn ein bestimmter Grenzwert überschritten wird, gilt diese Instanz als tatsächlich richtige Erkennung.\cite{ref:jordan}
+
+\subsection{Precision und Recall}
+
+\textit{Precision} (oder auch Falsch-Positiv-Rate) sagt aus mit welcher Wahrscheinlichkeit eine Vorhersage korrekt ist. Diese Metrik wird durch die Formel 
+\begin{equation}\label{equation:precision}
+  Precison = \frac{RP}{RP + FP}
+\end{equation}
+berechnet, wobei $RP$ (Richtig-Positiv) die Anzahl der richtigen Erkennungen und $FP$ (Falsch-Positiv) die Anzahl der falschen Erkennungen sei.\cite{ref:map} \textit{Precision} ist also der Anteil von tätsächlich richtigen Erkennungen in Relation zu allen Erkennungen. In Bezug auf Instanzsegmentierung wird die Frage beantwortet, wie viele der erkannten Objekte in einem Bild tatsächlich eine passende Grundwahrheitüberschneidung und eine IoU-Grenzwertüberschreitung haben.\cite{ref:jordan}
+\\\\
+\textit{Recall} (oder auch Falsch-Negativ-Rate) misst die Wahrscheinlichkeit, dass alle tatsächlich wahren Detektionen korrekt erkannt wurden. Diese Metrik wird durch die Formel 
+\begin{equation}\label{equation:recall}
+  Precison = \frac{RP}{RP + FN}
+\end{equation}
+berechnet, wobei $RP$ (Richtig-Positiv) die Anzahl der richtigen Erkennungen und $FN$ (Falsch-Negativ) die Anzahl der Objekte, die fälschlicherweise nicht erkannt wurden, sei. \textit{Recall} ist also der Anteil von tätsächlich richtigen Erkennungen in Relation zu allen Objekten im Datensatz.\cite{ref:map} In Bezug auf Instanzsegmentierung wird die Frage beantwortet, wie viele der Objekte mit Grundwahrheit in einem Bild als tatsächlich richtig erkannt werden und eine IoU-Grenzwertüberschreitung haben.\cite{ref:jordan}
+
+\subsection{Average Precision}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=5cm]{pics/kites.jpg}
+  \hspace{.5cm}
+  \includegraphics[height=5cm]{pics/precision-recall-kurve.png}
+  \caption[Precision-Recall-Kurve]{Links: Beispielbild mit multiplen Detektionen und Klassen\cite{ref:arlen}\\Rechts: Beispiel Precision-Recall-Kurve für die Klasse ``Person''\cite{ref:huang}}
+  \label{fig:precision-recall}
+\end{figure}
+\noindent
+Ein \textit{Precision}- und \textit{Recall}-Wert bezieht sich jeweils auf eine detektierte Objektinstanz einer Klasse. Bei mehreren detektierten Objekte einer Klasse in einem Bild können diese in einer Precision-Recall-Kurve visualisiert werden (s. Abb. \ref{fig:precision-recall}). \textit{Average Precision} (oder auch AP) fasst die Form der Kurve zu einem Wert zusammen, indem es den Durchschnitt der \textit{Precision}-Werte an elf \textit{Recall}-Werten $[0, 0.1, \dots, 1]$ berechnet: 
+
+\begin{equation}\label{equation:ap}
+  AP = \frac{1}{11} \sum_{r \in \{0, 0.1, \dots, 1\}}  p_{interp}(r)
+\end{equation}
+\noindent
+Ein \textit{Precision}-Wert $p$ an der \textit{Recall}-Stelle $r$ wird interpoliert, indem der Maximumwert übernommen an der \textit{Recall}-Stelle $\tilde{r}\ge r$ wird:
+
+\begin{equation}\label{equation:pinterp}
+  p_{interp}(r) = \max_{\tilde{r}:\tilde{r}\ge r} p (\tilde{r})
+\end{equation}
+\noindent
+wobei $p(\tilde{r})$ der \textit{Precision}-Wert $p$ an der \textit{Recall}-Stelle $\tilde{r}$ sei. Die Interpolation reduziert den Einfluss kleiner, lokaler Unebenheiten in der Kurve.\cite{ref:huang}
+
+\subsection{Mean Average Precision}
+
+\textit{Mean Average Precision} ist der Durschschnitt aller \textit{Average Precision}-Werte jeder Klasse in jedem Element eines (Sub-)Datensatzes.\footnote{\textit{mAP} wird oft nur \textit{AP} genannt.} \textit{mAP} wird zum Beispiel auch in der COCO- oder PASCAL-VOC-Challenge benutzt, um die Resultate der Challenge-Teilnehmer zu bewerten (s. Tabelle \ref{tab:maskvsfcisvsmnc}). Aber hier kann es zu Unterschieden kommen, wie der \textit{mAP} berechnet wird. So ist es bei der COCO-Challenge der durchschnittliche \textit{mAP} über verschiedene \textit{IoU}-Grenzwerte. Hier wird jeweils ein \text{mAP} an zehn verschiedenen \textit{IoU}-Werten $[0.5, 0.55, \dots, 0.95]$ berechnet und aus den Ergebnissen wird der Durchschnitt ermittelt.\cite{ref:coco:eval} In dieser Arbeit wird stets $IoU=0.5$ als Grenzwert benutzt.
