@@ -2,14 +2,15 @@
 
 \section{Konzept}\label{sec:concept}
 
-Das Programmablauf wird in einzelne Schritte unterteilt, auf die in den nächsten Kapiteln näher eingegangen werden.
-\\\\
 \begin{figure}[ht]
   \centering
   \includegraphics[width=.2\textwidth]{pics/overview.PNG}
   \caption{Gesamtablauf der Anwendung}
   \label{fig:overview}
 \end{figure}
+\noindent
+Das Programmablauf wird in einzelne Schritte unterteilt, auf die in den nächsten Kapiteln näher eingegangen werden.
+\\\\
 Zuerst müssen die Daten für das Training bzw. für die Erkennung manuell annotiert werden. Diese Metadaten werden dann genutzt, um automatisch Sentinelprodukte\footnote{Aufnahmenpakete der Sentinel-Plattformen werden als Produkte bezeichnet.} mittels einer API, die von der Copernicus zur Verfügung gestellt wird, herunterzuladen. Aus den Produkten werden die relevanten Bänder extrahiert und unter anderem die jeweiligen NDVI-Werte berechnet. Nachdem die Produkte für das Training vorbereitet wurden, werden die Daten in ein Trainings- und in ein Validierungsdatensatz aufgeteilt. Der folgende Trainingsprozess basiert auf diesen Datensätzen. Sobald das Training abgeschlossen ist, kann die Performanz des Modells getestet werden. 
 
 \section{Annotation}\label{sec:annotation}
@@ -57,8 +58,15 @@ Als Format dieser Informationen dient \textit{GeoJSON}\footnote{GeoJSON ist eine
 \noindent
 Es ist angebracht einen Zeitraum von mehreren Tagen bzw. Wochen zu wählen, da die Sentinel-2-Satelliten keine täglichen Daten liefern und weil eine Infektion typischerweise über einen längeren Zeitraum vorherrscht. Die Zeitspanne ist von der Krankheit abhängig. Hier wurden eine Woche vor und nach dem Aufnahmezeitpunkt genutzt, um nach Produkten zu suchen.
 
-\section{Suche nach Sentinelprodukte}
+\section{Suche nach Sentinelprodukten}
 
+\begin{figure}[H]
+  \centering
+  %\includegraphics[height=0.6\textheight, width=.6\textwidth]{pics/get-products.png}
+  \includegraphics[height=0.75\textheight]{pics/get-products.png}
+  \caption{Ablaufdiagramm Sentineldatenaufbereitung}
+  \label{fig:get-products}
+\end{figure}
 
 Der \textit{Copernicus Open Access Hub}\footnote{\url{https://scihub.copernicus.eu/}} ermöglicht freien und offenen Zugriff auf Sentinel-Produkte. Die Daten sind sowohl über eine grafische Oberfläche als auch über eine REST-API verfübar. Vorrausgesetzung für beide Optionen ist ein Account, der über die grafische Oberfläche erstellt werden kann.
 \\\\
@@ -66,18 +74,20 @@ Die Nutzung der Schnittstelle erfolgt über die Python-Bibliothek \texttt{sentin
 \\\\
 Für jedes Produkt, das zur aktuellen Annotation gehört, wird ein neuer Eintrag zu einer \textit{FeatureCollection} hinzugefügt. Für die spätere Entwicklung sind die Annotationen so leichter zu finden und bearbeitbar. Außerdem bleiben dadurch die Originaldaten unberührt. Dieser Schritt wird für jede vorhandene Annotationsdatei wiederholt. Anschließend werden die Bilddateien für B4 und B8 aus dem Produkt extrahiert.
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[height=0.6\textheight, width=.6\textwidth]{pics/get-products.png}
-  \caption{Ablaufdiagramm der Beschaffung der Sentinelprodukte}
-  \label{fig:get-products}
-\end{figure}
+
 
 \section{Aufbereitung der Sentineldaten}
 
-Originale Sentinel-2-Aufnahmen haben eine Größe von $10980*10980$ px und müssen deshalb deutlich verkleinert werden, um Speicherressourcen zu minimieren. Vor allem da nur kleine Ausschnitte von wenigen Pixeln benötigt werden. 
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=0.75\textheight]{pics/create-ndvi.png}
+  \caption{Ablaufdiagramm der Aufbereitung}
+  \label{fig:create-ndvi}
+\end{figure}
+
+Originale Sentinel-2-Aufnahmen haben eine Größe von $10980*10980$ px und müssen deshalb deutlich verkleinert werden, um die Speicherbelastung zu minimieren. Vor allem da nur kleine Ausschnitte von wenigen Pixeln benötigt werden. 
 \\\\
-Zu Beginn werden alle Elemente aus der vorher erstellten \textit{FeatureCollection} geladen und nacheinander bearbeitet. Jedes Produkt hat ein eigenes Koordinatenreferenzsystem (CRS, Coordinate Reference System) und unter Umständen unterscheiden sich die Systeme des Produktes und des Polygons\footnote{Nach RFC 7946 ist das geografische Referenzsystem \textit{World Geodetic
+Zu Beginn werden alle Elemente aus der vorher erstellten \textit{FeatureCollection} geladen und nacheinander bearbeitet. Jedes Produkt hat ein eigenes Koordinatenreferenzsystem (engl.: Coordinate Reference System, CRS) und unter Umständen unterscheiden sich die Systeme des Produktes und des Polygons\footnote{Nach RFC 7946 ist das geografische Referenzsystem \textit{World Geodetic
  System 1984} (WGS 84) das Standardsystem.\cite{ref:rfc7946}}. Diese müssen gleich sein, um miteinander agieren zu können. Das Produkt-CRS kann aus den extrahierten Bändern gelesen und dann dazu genutzt werden, um die Annotationskoordinaten in eben dieses zu projizieren.
  \\\\
  Nachdem abgesichert wurde, dass die RoI in dem Sentinelprodukt enthalten ist, wird aus den Bändern die RoI samt einem vorher definierten Rand ausgeschnitten. Der Rand ist später bei der Data Augmentation hilfreich. Gleichzeitig erstellt die Anwendung eine gleich große binäre Maske, wobei die Elemente der Maske mit den Pixeln der RoI korrespondieren. Die Elemente, die die RoI repräsentieren, enthalten einen wahren Wert.
@@ -91,17 +101,17 @@ Zu Beginn werden alle Elemente aus der vorher erstellten \textit{FeatureCollecti
   \label{fig:ndvi}
 \end{figure}
 \noindent
-Nun wird der NDVI aus den B4- und B8-Ausschnitten, wie in Kapitel \ref{sec:ndvi} gezeigt, berechnet (s. Abb. \ref{fig:ndvi}). Das Ergebnis wird nun mittels Data Augmentation vervielfältigt. Dazu wird es vier mal um 90\degree gedreht. Danach wird jedes rotierte Bild horizontal und vertikal gespiegelt. Darauf werden zehn mal aus den rotierten und gespiegelten Daten zufällig Bilder in der Größe von $16*16$ px ausgeschnitten. Durch diese Operationen vergrößert sich die Grundgesamtheit um den Faktor 80. Jede Operation wird ebenfalls auf die entsprechende Maske angewandt. Dabei wird darauf geachtet, dass die Maske nicht vollständig aus falschen Werten besteht und dass die manipulierten Dateien ebenfalls der \textit{FeatureCollection} hinzugefügt werden.
-
-\begin{figure}[ht]
-  \centering
-  \includegraphics[height=0.6\textheight,width=0.25\textwidth]{pics/create-ndvi.png}
-  \caption{Ablaufdiagramm der Aufbereitung}
-  \label{fig:create-ndvi}
-\end{figure}
+Nun wird der NDVI aus den B4- und B8-Ausschnitten, wie in Kapitel \ref{sec:ndvi} gezeigt, berechnet (s. Abb. \ref{fig:ndvi}). Das Ergebnis wird nun mittels Data Augmentation vervielfältigt. Dazu wird es vier mal um 90\degree gedreht. Danach wird jedes rotierte Bild horizontal und vertikal gespiegelt. Darauf werden neun mal aus den rotierten und gespiegelten Daten zufällig Bilder in der Größe von $16*16$ px ausgeschnitten. Durch diese Operationen vergrößert sich die Grundgesamtheit um den Faktor 108. Jede Operation wird ebenfalls auf die entsprechende Maske angewandt. Dabei wird darauf geachtet, dass die Maske nicht vollständig aus falschen Werten besteht und dass die manipulierten Dateien ebenfalls der \textit{FeatureCollection} hinzugefügt werden.
 
 \section{Trainings- und Validierungsdatensatz}\label{sec:dataset}
 
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=0.5\textheight,width=0.2\textwidth]{pics/create-sets.png}
+  \caption{Ablaufdiagramm der Datensatzaufteilung}
+  \label{fig:create-datasets}
+\end{figure}
+\noindent
 Die berechneten NDVI-Bilddateien und deren Masken bilden die Gesamtheit des Datensatzes. Um das Modell trainieren und testen zu können, muss diese Gesamtheit aufgeteilt werden. 
 \begin{itemize}
 	\item Trainingsdatensatz \\
@@ -123,12 +133,6 @@ In welchem Verhältnis die Datensätze aufgeteilt werden, hat einen Einfluss auf
 \\\\
 Hier wird zunächst die Gesamtmenge zwischen einem unbdestimmten Teildatensatz ($80\%$ der Gesamtheit) und dem Testdatensatz ($20\%$ der Gesamtheit) aufgeteilt. Danach teilt sich der Teildatensatz in den Trainingsdatensatz ($80\%$ des Teiles) und in den Validierungsdatensatz ($20\%$ des Teiles). Die hier angewandte prozentualen Werte sind häufig angewandte initiale Verhältnisse und können bei Bedarf angepasst werden. Die geteilten Mengen werden unterschiedlichen Orten abgelegt und für jede Sammlung wird jeweils eine neue \textit{FeatureCollection} erzeugt, die die Annotationen der entsprechenden Elemente enthalten. 
 
-\begin{figure}[ht]
-  \centering
-  \includegraphics[height=0.5\textheight,width=0.2\textwidth]{pics/create-sets.png}
-  \caption{Ablaufdiagramm der Datensatzaufteilung}
-  \label{fig:create-ndvi}
-\end{figure}
 
 \section{Training/Detektion}\label{sec:training}
 
@@ -183,7 +187,7 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 \noindent
 \textbf{Parameterbezeichnung:} LEARNING\_RATE\\
 \textbf{Erklärung:} Die Lernrate gibt an, wie stark die Gewichte des Netzwerkes korrigiert werden. Wenn dieser Wert zu klein ist, kann die Konvergenz zum Ideal sehr lange dauern. Ein zu hoher Wert kann das Ideal überschießen oder sogar dafür sorgen, dass die Lernkurve divergiert. He et al. nutzen in ihrer Ausarbeitung einen Wert von $0.02$.\cite{ref:maskrcnn} Dieser sorgt jedoch laut den Entwicklern von Matterport zu einem explosionartigen Anstieg der Gewichte, weswegen sie sich für $0.001$ entschieden haben.\cite{ref:matterport} Hier werden beide Werte untersucht.\\
-\textbf{Werte:}$0.001$, $0.2$\\
+\textbf{Werte:} $0.001$, $0.2$\\
 
 \noindent
 \textbf{Parameterbezeichnung:} NUM\_CLASSES\\
@@ -192,8 +196,8 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 
 \noindent
 \textbf{Parameterbezeichnung:} RPN\_ANCHOR\_SCALES\\
-\textbf{Erklärung:} \\
-\textbf{Werte:} \\
+\textbf{Erklärung:} Quadratgröße der RPN-Anker. Die Werte sollten kleiner sein als \texttt{IMAGE\_MAX\_DIM}. Anker, die größer sind, machen keinen Sinn, da Objektinstanzen sich innerhalb der Bildgrenzen befinden.\\
+\textbf{Werte:} (8, 16, 32, 64, 128), (4, 8, 16, 32, 64)\\
 
 \noindent
 \textbf{Parameterbezeichnung:} STEPS\_PER\_EPOCH\\
@@ -230,7 +234,7 @@ Wählen die Benutzer eine der ersten beiden Möglichkeiten, werden die vortraini
 	\item training
 	\item inference
 \end{itemize}
-annehmen. Wobei \textit{training} die Gewichte des Modells für das Training veränderbar macht und \textit{inference} für die Detektion die Gewichte einfriert, da während einer Erkennung nicht trainiert werden.
+annehmen. Wobei \textit{training} die Gewichte des Modells für das Training veränderbar macht und \textit{inference} für die Detektion die Gewichte einfriert, da sie während einer Erkennung nicht trainiert werden müssen.
 
 \subsubsection{training}
 
@@ -249,4 +253,22 @@ Auf Grund des \textit{inference}-Modells und des Testdatensatzes kann nun am End
 \\\\
 Bevor das Training starten kann, müssen noch die Anzahl der Epochen und die trainierbaren Schichten angegeben werden. Die Anzahl der Epochen hat ein Einfluss darauf, wie oft ein Training wiederholt wird. Wird der Wert zu niedrig gewählt, kann es sein, dass die Gewichte nicht ausreichend genug trainiert sind. So riskiert man \textit{Underfitting}. Ist der Wert jedoch zu hoch, werden die Gewichte zu sehr an den Trainingsdatensatz angepasst und ein \textit{Overfitting} ist die Folge. Mit dem \textit{training}-Modus gibt man zwar an, dass die Gewichte variabel sind, aber durch die hier angegeben Schichten wird genau festgelegt, welche Schichten eingefroren werden und welche nicht. So wird mit \texttt{layers='heads'} lediglich der \textit{network head} trainiert, werden alle Schichten mit \texttt{layers='all'} trainierbar sind. Bei einem kleinen Datensatz wäre es zum Beispiel sinnvoll, nur die Klassifikatoren zu trainieren, die sich im Netzwerkkopf befinden. Zusätzlich können verschiedene Schichten iterativ trainiert werden. Zum Beispiel wird in den ersten 20 Epochen der \textit{head} trainiert. Anschließend werden alle Schichten für 80 Epochen trainiert.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[height=.95\textheight,width=.4\textwidth]{pics/train-model.png}
+  \caption{Ablaufdiagramm des Trainings}
+  \label{fig:training}
+\end{figure}
+
 \subsubsection{inference}
+
+\begin{figure}[ht]
+  \centering
+  \includegraphics[height=0.6\textheight]{pics/detect.png}
+  \caption{Ablaufdiagramm der Erkennung}
+  \label{fig:training}
+\end{figure}
+\noindent
+Im \textit{inference}-Mdous wird das Mask R-CNN-Objekt durch \texttt{InferenceConfig} konfiguriert. Wenn die angebebenen Gewichte in das Modell geladen wurden, können $n$ Bilder, wobei $n\ge 1$ sei, zur Detektion in das Netzwerk gegeben werden, ohne dass eine spezielle \texttt{Dataset}-Instanz vonnöten ist. Es ist wichtig, dass das die NDVI-Werte vor der Detektion zu RGB-Werten konvertiert werden, wie es in Kapitel \ref{sub:sec:dataset} beschrieben ist.
+\\\\
+Nach der Detektierung mit möglichen Objekten gibt das Modell eine Liste mit $n$ Elementen zurück. Die Elemente dieser Listen bestehen aus $m$ vorhergesagten \textit{RoIs}, Masken und Klassen der jeweiligen Bilder, wobei $m \ge 0$ sei. Diese sind in separaten Listen abgelegt und sind so angeordnet, dass die jeweiligen Elemente der Listen an Position $i$ zusammengehören, wobei $0\le i < m$ sei. So gehören die $i$-te \textit{RoI}, Klasse und Masken zu der selben vorhergesagten Objektinstanz. Zusätzlich liegt der Instanz ein Wert zwischen $0$ und $1$ bei, die die Wahrscheinlichkeit der Korrektheit der Vorhersage angibt. 

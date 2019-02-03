@@ -1,0 +1,6 @@
+\chapter{Experimente}\label{chap:experiments}
+
+Nach der Beschreibung des Konzept und Verlauf des Python-Skripts geht dieses Kapitel auf die Trainingsdurchläufe ein und diskutiert die Ergebnisse. 
+\\\\
+Es wurden iterativ Trainingprozeduren durchgeführt mit jeweils unterschiedlichen Konfiguration, wie um vorherigen Kapitel gezeigt, und miteinander verglichen. Die genauen Konfigurationen werden bei den einzelnen Experimenten angeführt. Die Experimente liefen auf einem Rechner mit NVIDIA TITAN Xp 12 GB VRAM Grafikkarte, Intel i7-7800X CPU und 32 GB RAM. Es wurden zwei unterschiedliche Datensätze aus den Sentinelprodukten erzeugt. Der originale unaugmentierte Datensatz enthält insgesamt jeweils zwölf Bilder und Masken\footnote{Trainingsanteil: 7, Validationsanteil: 2, Testanteil: 3} und dient als Basis für das Ausgangsexperiment. Der augmentierte Datansatz (s. Kapitel \ref{sec:augmentation}) enthält 1291 Dateien und Masken.\footnote{Trainingsanteil: 825, Validationsanteil: 207, Testanteil: 259} Nachdem die zufällige Ausschnitte produziert wurden, kam es vor, dass einige Masken keinen \textit{RoI}-Anteil enthielten. Diese Masken und auch die zugehörigen Bilddateien wurden verworfen und weicht deswegen von der eigentlichen Größe von 1296 Elementen\footnote{Die zwölf ursprünglichen Dateien multipliziert mit dem Data Augementation-Faktor 108.} ab.
+\\\\
