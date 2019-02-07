@@ -23,8 +23,9 @@ dazu genutzt werden, den \textit{Normalized Difference Vegetation Index} (NDVI) 
 Die Sentinel-2-Satelliten sind eine von sechs Satellitenarten (Sentinel-1 bis -6) des Copernicus-Programms\footnote{Das Copernicus-Programm wurde von der Europäischen Union zur Erdbeobachtung ins Leben gerufen. Die gesammelten Daten werden für wissenschaftliche, wirtschaftliche und private Anwendungszwecke zur Verfügung gestellt.\cite{ref:copernicus}}, die zur Erdbeobachtung in einen 786 km hohen sonnensynchronen Orbit gebracht wurden. Die Instrumente der Sentinel-2-Satelliten können Aufnahmen in Bereichen des roten und nahen Infrarot- bis hin zum Kurzwelleninfrarotspektrums. Die Aufnahmen haben Gesamtgröße von $100*100$ km und je nach Band eine von Auflösung von 10m, 20m oder 60m (s. Tabelle \ref{tab:resolutions}).
 
 \begin{table}[ht]
+\centering
 \begin{tabular}{c|c|c|c}
-Bandnummer & Räumliche Auflösung & Mittlere Wellenlänge (nm) & Bandbreite (nm) \\
+Bandnummer & Auflösung & Wellenlänge (nm) & Bandbreite (nm) \\
 \hline
 B1 & 60 & 443,9 & 27\\
 B2 & 10 & 496,6 & 98\\
@@ -225,4 +226,4 @@ wobei $p(\tilde{r})$ der \textit{Precision}-Wert $p$ an der \textit{Recall}-Stel
 
 \subsection{Mean Average Precision}
 
-\textit{Mean Average Precision} ist der Durschschnitt aller \textit{Average Precision}-Werte jeder Klasse in jedem Element eines (Sub-)Datensatzes.\footnote{\textit{mAP} wird oft nur \textit{AP} genannt.} \textit{mAP} wird zum Beispiel auch in der COCO- oder PASCAL-VOC-Challenge benutzt, um die Resultate der Challenge-Teilnehmer zu bewerten (s. Tabelle \ref{tab:maskvsfcisvsmnc}). Aber hier kann es zu Unterschieden kommen, wie der \textit{mAP} berechnet wird. So ist es bei der COCO-Challenge der durchschnittliche \textit{mAP} über verschiedene \textit{IoU}-Grenzwerte. Hier wird jeweils ein \text{mAP} an zehn verschiedenen \textit{IoU}-Werten $[0.5, 0.55, \dots, 0.95]$ berechnet und aus den Ergebnissen wird der Durchschnitt ermittelt.\cite{ref:coco:eval} In dieser Arbeit wird stets $IoU=0.5$ als Grenzwert benutzt.
+\textit{Mean Average Precision} ist der Durschschnitt aller \textit{Average Precision}-Werte jeder Klasse in jedem Element eines (Sub-)Datensatzes.\footnote{\textit{mAP} wird oft nur \textit{AP} genannt.} \textit{mAP} wird zum Beispiel auch in der COCO- oder PASCAL-VOC-Challenge benutzt, um die Resultate der Challenge-Teilnehmer zu bewerten (s. Tabelle \ref{tab:maskvsfcisvsmnc}). Aber hier kann es zu Unterschieden kommen, wie der \textit{mAP} berechnet wird. So ist es bei der COCO-Challenge der durchschnittliche \textit{mAP} über verschiedene \textit{IoU}-Grenzwerte. Hier wird jeweils ein \text{mAP} an zehn verschiedenen \textit{IoU}-Werten $[0.5, 0.55, \dots, 0.95]$ berechnet und aus den Ergebnissen wird der Durchschnitt ermittelt.\cite{ref:coco:eval} In dieser Arbeit wird stets $IoU=0.5$ als Grenzwert benutzt, um die Auswertung einfach zu halten.
