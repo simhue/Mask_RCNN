@@ -197,7 +197,7 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 \noindent
 \textbf{Parameterbezeichnung:} RPN\_ANCHOR\_SCALES\\
 \textbf{Erklärung:} Quadratgröße der RPN-Anker. Die Werte sollten kleiner sein als \texttt{IMAGE\_MAX\_DIM}. Anker, die größer sind, machen keinen Sinn, da Objektinstanzen sich innerhalb der Bildgrenzen befinden.\\
-\textbf{Werte:} (8, 16, 32, 64, 128), (4, 8, 16, 32, 64)\\
+\textbf{Werte:} (8, 16, 32, 64, 128)\\
 
 \noindent
 \textbf{Parameterbezeichnung:} STEPS\_PER\_EPOCH\\
@@ -212,7 +212,7 @@ Die Klasse \texttt{Config} ist eine Sammlung von Parametern, die zur Konfigurati
 \noindent
 \textbf{Parameterbezeichnung:} WEIGHT\_DECAY\\
 \textbf{Erklärung:} Einflussgröße der L2 Regulization.\\
-\textbf{Werte:} $0.01$, $0.005$, $0.001$\\
+\textbf{Werte:} $0.01$, $0.001$, $0.0001$\\
 
 \noindent
 Der Konfigurationsparameter \texttt{BATCH\_SIZE} wird automatisch aus $GPU\_COUNT * IMAGES\_PER\_GPU$ berechnet. Während \texttt{IMAGES\_PER\_GPU} angibt, wie viele Bilder pro Rechnereinheit (GPU oder CPU) in das neuronale Netz geladen werden, definiert \texttt{BATCH\_SIZE} wie viele Bilder insgesamt pro Trainingsschritt geladen werden.
