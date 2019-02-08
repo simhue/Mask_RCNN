@@ -24,7 +24,7 @@ class CropDiseaseConfig(Config):
     LEARNING_RATE = 0.001
     NUM_CLASSES = 1 + 1
     RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128)
-    STEPS_PER_EPOCH = 3
+    STEPS_PER_EPOCH = 23
     USE_MINI_MASK = False
 \end{lstlisting}
 \noindent
@@ -60,7 +60,7 @@ class CropDiseaseConfig(Config):
     LEARNING_RATE = 0.001
     NUM_CLASSES = 1 + 1
     RPN_ANCHOR_SCALES = (8, 16, 32, 64, 128)
-    STEPS_PER_EPOCH = 3
+    STEPS_PER_EPOCH = 206
     USE_MINI_MASK = False
 \end{lstlisting}
 \noindent
@@ -117,9 +117,9 @@ Bei diesem Experiment wurde ein Modell Datensatz 3 und alle Schichten des Modell
   \label{fig:pred-2}
 \end{figure}
 \noindent
-Die \textit{mAP}-Kurve konvergiert ab Epoche 7 gegen $1$ und verweilt dort für den Rest des Trainings. Dagegen sinken die $loss$-Werte weiterhin und nähern sich ab Epoche 37 $0$ an. Daher wurde die Gewichte dieser Epoche näher untersucht. Abb. \ref{fig:pred-2} zeigt, dass das Modell resistenter gegenüber Rotationen ist. Nichtsdestotrotz reagiert das Modell empfindlich auf Veränderungen wie zum Beispiel ein größerer Ausschnitt oder Translationen (s. unterste Reihe in Abb. \ref{fig:pred-2}). Daraus ergibt sich, dass das Modell allgemein einsetzbar ist und die Datensätze durch weitere Augmentationen randomisiert werden müssen.
+Die \textit{mAP}-Kurve konvergiert ab Epoche 7 gegen $1$ und verweilt dort für den Rest des Trainings. Dagegen sinken die $loss$-Werte weiterhin und nähern sich ab Epoche 37 $0$ an. Daher wurde die Gewichte dieser Epoche näher untersucht. Abb. \ref{fig:pred-2} zeigt, dass das Modell resistenter gegenüber Rotationen ist. Nichtsdestotrotz reagiert das Modell empfindlich auf Veränderungen wie zum Beispiel ein größerer Ausschnitt oder Translationen (s. unterste Reihe in Abb. \ref{fig:pred-2}). Daraus ergibt sich, dass das Modell nicht allgemein einsetzbar ist und die Daten durch weitere Augmentationen randomisiert werden müssen.
 \newpage
-\section{Data Augmention und Regularization}
+\section{Data Augmention und Regularization}\label{sec:experiment-3}
 
 \begin{lstlisting}[language=python,caption={Konfiguration für Experiment 3},captionpos=b,label=lst:experiment-3]
 class CropDiseaseConfig(Config):
@@ -199,5 +199,4 @@ Diese Sektion vergleicht mehrere Traingsläufe direkt miteinander. Zur simpleren
 \noindent
 Für auf Datensatz 3 trainierten Modelle (jeweils Epoche 100) zeichnen sich in  Abb. \ref{fig:val-loss-3} starke Schwankungen ab und kein Modell überschreitet $mAP>0.7$. Die Vorhersagen in den oberen vier Reihen in Abb. \ref{fig:pred-3} stimmen zum großen Teil mit den Masken überein. Weitere hier nicht aufgeführte Vorhersagen zeigen ähnliche Ergebnisse. Es kommt vor, dass die kleine Zielregion vorhergesagt wird, obwohl die entsprechende binäre Maske die große \textit{RoI} repräsentiert, so ähnlich wie es in der unteren Reihe zu sehen ist. Dieses Verhalten würde die schlechten \textit{mAP}-Kurven und die Schwankungen erklären. Da die Detektion nicht mit dem erwarteten Ergebnis übereinstimmt und daher der berechnete Fehler größer ist, obwohl die Detektion eigentlich korrekt ist, da sich beide genutzten \textit{RoIs} geografisch schneiden. Durch den größeren Fehler ist die Korrektur der Gewichte entsprechend größer. Um die Annahme zu bekräftigen, wurde ein Modell (orange) auf dem speziellen Datensatz trainiert. Im Vergleich zu den anderen Kurven konvergiert die orangene \textit{loss}-Kurve gegen $0$ bzw. die orangene \textit{mAP}-Kurve gegen $1$. Wäre mehrere unterschiedliche \textit{RoIs} vorhanden, die sich nicht schneiden, würde der Einfluss sich nicht bemerkbar machen. Was hier jedoch nicht der Fall ist, da beide \textit{RoIs} jeweils etwa die Hälfte des Datensatzes ausmachen.
 \\\\
-Es ist zu sehen, dass die \textit{Ridge Regression} (hellblau und pink) keinen merkbaren Einfluss auf das Training haben, weil einen ähnlichen Verlauf wie die dunkelblaue und rote Kurven haben. Im Gegensatz dazu zeigt die \textit{Data Augmentation} positive Ergebnisse (s. Abb. \ref{fig:pred-3}) und alle Modelle sind deutlich robuster gegenüber manipulierten Bildern. Es ist zu erwähnen, dass die Detektion bei jedoch größeren Ausschnitten fehlschlägt und dass das Modell, dessen \textit{head} trainiert wurde, ebenfalls keine guten Ergebnisse erzielt.
-
+Es ist zu sehen, dass die \textit{Ridge Regression} (hellblau und pink) keinen merkbaren Einfluss auf das Training haben, weil einen ähnlichen Verlauf wie die dunkelblaue und rote Kurven haben. Im Gegensatz dazu zeigt die \textit{Data Augmentation} positive Ergebnisse (s. Abb. \ref{fig:pred-3}) und alle Modelle sind deutlich robuster gegenüber manipulierten Bildern. Jedoch schlagen die Detektionen bei größeren Ausschnitten fehl oder geben sinnlose Resultate zurück. Weiterhin sei erwähnt, dass das Modell, dessen \textit{head} trainiert wurde, von allen hier erwähnten Modellen am schlechtesten abschneidet und es zumindest nicht hilfreich ist, nur die oberen Schichten zu trainieren.

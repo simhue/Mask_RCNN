@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"mask",
+				"pics/mask-2-1.png"
+			],
+			[
+				"pre",
+				"pics/pred-1-1.png"
+			],
+			[
+				"ma",
+				"pics/map-1.PNG"
+			],
+			[
 				"rpn-",
 				"pics/rpn-refinement.png"
 			],
@@ -14,10 +26,6 @@
 			[
 				"no",
 				"noindent"
-			],
-			[
-				"ma",
-				"ref:maskrcnn: Mask R-CNN"
 			],
 			[
 				"se",
@@ -52,7 +60,7 @@
 			"file": "summary.tex",
 			"settings":
 			{
-				"buffer_size": 55,
+				"buffer_size": 3012,
 				"encoding": "UTF-8",
 				"line_ending": "Windows",
 				"name": "\\chapter{Fazit und Ausblick}\\label{chap:summary}"
@@ -62,7 +70,7 @@
 			"file": "future.tex",
 			"settings":
 			{
-				"buffer_size": 37,
+				"buffer_size": 342,
 				"encoding": "UTF-8",
 				"line_ending": "Windows",
 				"name": "\\chapter{Ausblick}\\label{chap:future}"
@@ -81,7 +89,7 @@
 			"file": "concept.tex",
 			"settings":
 			{
-				"buffer_size": 24590,
+				"buffer_size": 24570,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -90,22 +98,37 @@
 			"file": "methods.tex",
 			"settings":
 			{
-				"buffer_size": 23580,
+				"buffer_size": 23609,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"contents": "\\chapter{Experimente}\\label{chap:experiments}\n\nNach der Beschreibung des Konzept und Verlauf des Python-Skripts geht dieses Kapitel auf die Trainingsdurchläufe ein und diskutiert die Ergebnisse. Es wurden iterativ Trainingprozeduren durchgeführt mit jeweils unterschiedlichen Konfiguration, wie um vorherigen Kapitel gezeigt, und miteinander verglichen. Die sp\n\\\\\\\\",
 			"file": "experiments.tex",
-			"file_size": 368,
-			"file_write_time": 131935258397600036,
 			"settings":
 			{
-				"buffer_size": 365,
+				"buffer_size": 13336,
 				"encoding": "UTF-8",
 				"line_ending": "Windows",
 				"name": "\\chapter{Experimente}"
+			}
+		},
+		{
+			"file": "main.tex",
+			"settings":
+			{
+				"buffer_size": 3923,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "overfitting.tex",
+			"settings":
+			{
+				"buffer_size": 7914,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
 			}
 		},
 		{
@@ -128,10 +151,10 @@
 			}
 		},
 		{
-			"contents": "[20:39]\nDaiZy85:\nzocken gleich wieder, wenne bock hast.\naber ich ströme.\naber da gucken dann eh  nur 5 zu.\nD\nXD\n\n[20:39]\nlocohorst:\ngerne aber ich muss noch lernen\n\n[20:40]\nDaiZy85:\nQUARK!\n[20:39]\nDaiZy85:\nzocken gleich wieder, wenne bock hast.\naber ich ströme.\naber da gucken dann eh  nur 5 zu.\nD\nXD\n\n[20:39]\nlocohorst:\ngerne aber ich muss noch lernen\n\n[20:40]\nDaiZy85:\nQUARK!\n",
+			"contents": "kill 15444 15446 15447 15448 15449 15450 15451 15452 15453 15454 15455 15456 15457 15458 15459 15460 15461 15462 15463 15464 15465 15466 15467 15468 15469 15470 15471 15472 15473 15474 15475 15476 15477 15428",
 			"settings":
 			{
-				"buffer_size": 378,
+				"buffer_size": 208,
 				"line_ending": "Windows",
 				"name": "Find Results",
 				"scratch": true
@@ -296,6 +319,29 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"databio  ",
+			"2cm",
+			".5cm",
+			"5cm",
+			"-2-",
+			"-2-1",
+			"Experiment",
+			"section",
+			"\\includegraphics[height=3cm]",
+			"mask",
+			"1cm",
+			"1",
+			".5",
+			"3cm",
+			"cm",
+			"3cm",
+			"mAP",
+			"80",
+			"154",
+			"15444",
+			"d",
+			"databio",
+			" databio    20   0 18.1G 1110M  390M S  0.0  3.5  0:06.38 /home/databio/dev/anaconda3/envs/simon/bin/python crop-disease.py --weights=last --dataset=../datasets-big train",
 			"height=8cm",
 			"5",
 			"\t",
@@ -361,7 +407,7 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -389,7 +435,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -398,23 +444,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 55,
+						"buffer_size": 3012,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								55,
-								55
+								2713,
+								2713
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 0,
-								"count": 1,
+								"changes": 3511,
+								"count": 374,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -427,7 +473,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -436,23 +482,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 37,
+						"buffer_size": 342,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								36,
-								36
+								243,
+								243
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 0,
-								"count": 0,
+								"changes": 517,
+								"count": 39,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -465,7 +511,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -500,7 +546,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 580.0,
+						"translation.y": 200.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 3,
@@ -512,23 +558,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 24590,
+						"buffer_size": 24570,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1169,
-								1169
+								6596,
+								6596
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 0,
-								"count": 2588,
+								"changes": 2,
+								"count": 2583,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -539,10 +585,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1583.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -551,15 +597,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 23580,
+						"buffer_size": 23609,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4068,
-								4068
+								23609,
+								23609
 							]
 						],
 						"settings":
@@ -567,7 +613,7 @@
 							"WordCount":
 							{
 								"changes": 0,
-								"count": 2431,
+								"count": 2436,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -578,10 +624,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 840.0,
+						"translation.y": 6261.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -590,23 +636,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 365,
+						"buffer_size": 13336,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								360,
-								360
+								13336,
+								13336
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 1007,
-								"count": 40,
+								"changes": 433,
+								"count": 1149,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -616,14 +662,72 @@
 							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 4609.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 7,
+					"file": "main.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3923,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1970,
+								1970
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1080.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "overfitting.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 7914,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1677,
+								1049
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 60.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
 					"file": "introduction.tex",
 					"semi_transient": false,
 					"settings":
@@ -648,11 +752,11 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 10,
 					"type": "text"
 				},
 				{
-					"buffer": 8,
+					"buffer": 10,
 					"semi_transient": false,
 					"settings":
 					{
@@ -664,7 +768,7 @@
 						[
 							[
 								137,
-								137
+								0
 							]
 						],
 						"settings":
@@ -676,15 +780,15 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 9,
+					"buffer": 11,
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 378,
+						"buffer_size": 208,
 						"regions":
 						{
 							"match":
@@ -693,8 +797,8 @@
 								"regions":
 								[
 									[
-										378,
-										378
+										208,
+										208
 									]
 								],
 								"scope": ""
@@ -703,8 +807,8 @@
 						"selection":
 						[
 							[
-								0,
-								378
+								208,
+								0
 							]
 						],
 						"settings":
@@ -722,7 +826,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 11,
 					"type": "text"
 				}
 			]
@@ -765,7 +869,7 @@
 	},
 	"output.latextools":
 	{
-		"height": 195.0
+		"height": 199.0
 	},
 	"pinned_build_system": "",
 	"project": "masterthesis.sublime-project",
