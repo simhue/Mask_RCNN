@@ -83,28 +83,43 @@
 			"file": "concept.tex",
 			"settings":
 			{
-				"buffer_size": 24650,
+				"buffer_size": 24822,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "\\chapter{Methoden}\\label{chap:methods}\n\n\n\n\\section{Trainingsdaten}\\label{sec:data}\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=.7\\textwidth]{pics/roi.png}\n  \\caption[Region of Interest]{RGB-Sentinel-2-Aufnahme des zu untersuchenden Ackers. Die infizierten Flächen sind weiß umrandet. }\n  \\label{fig:roi}\n\\end{figure}\nDer infizierte Acker, der die Basis des Datensatzes bildet, befindet sich etwa $15$ km nordwestlich von Bologna in Norditalien (\\ang{44;34;28,92} Nord, \\ang{11;10;21,36} Ost). Das Feld hat eine Fläche von $7640,57$ m$^2$ und ist mit Sorghum bepflanzt. Mitarbeiter des CREA (Council for Agricultural Research and Economics) haben vor Ort am 12.07.2018 Befälle von Anthracnose und der bakteriellen Streifenkrankheit (med.: Xanthomonas translucens) diagnostiziert. Etwa die Hälfte der Pflanzen des Feldes sind betroffen. Dabei sind im östlichen Teil des Feldes (Abb. \\ref{fig:roi}, innere Markierung) auf einer Fläche von $1043,22$ m$^2$ von etwa $60$ bis $70\\%$ der Pflanzen befallen.\n\n\\section{Normalized Difference Vegetation Index}\\label{sec:ndvi}\n\nEs gibt eine starke Korrelation zwischen dem physiologischen Status einer Pflanze und deren Chlorophyllgehalt. Faktoren wie Krankheit, Dürre oder Umweltverschmutzung haben einen negativen Einfluss auf den Chlorophyllspiegel.\\cite{ref:hendry} Messungen haben ergeben, dass es eine Verbindung zwischen dem Reflexionsgrad im nahen Infrarotbereich und im Rotbereich und dem Chlorophyllgehalt gibt. Das heißt, dass eine gesunde, adulte Pflanze im nahen Infrarotbereich stärker reflektiert als zum Beispiel eine pathologisch veränderte Pflanze. Jedoch bleibt die Reflexion im roten Lichtspektrum in beiden Fällen vergleichsweise schwach. Andere vegetationsfreie Oberflächen wie Acker, Straßen oder Wasser strahlen auch im nahen Infrarotbereich schwach zurück. Dadurch ergibt sich eine zerstörungsfreie Methode, mit einer Multispektralkamera die Vitalität (\"`Grünheit\"') einer oder mehrerer Pflanzen zu bestimmen.\\cite{ref:anatoly} \\\\\\\\\nEine multispektralen Aufnahme kann mithilfe der Formel \n\\begin{equation}\\label{equation:ndvi}\n\tNDVI = \\frac{Band_{NIR} - Band_{Red}} {Band_{NIR} + Band_{Red}}\n\\end{equation}\ndazu genutzt werden, den \\textit{Normalized Difference Vegetation Index} (NDVI) zu berechnen. Wobei $Band_{NIR}$ der nahe Infrarotbereich (Near Infrared) und $Band_{RED}$ der sichtbare rote Bereich des elektromagnetischen Spektrums ist. Der NDVI gibt quantifizierte Werte im Bereich von $-1$ bis $1$ zurück. Dabei deuten Werte, die kleiner als $0$ sind, auf Wasserobflächen hin. $0$ bedeutet keine Vegetation. Bei Werte nahe $0$ handelt es sich um spärliche oder ungesunde Vegetation. Das bedeutet je näher ein Wert an $1$ ist, desto dichter bewachsen und gesünder ist die beobachtete Vegetationsfläche.\\cite{ref:nasa} Dass bei einem niedrigen, positiven NDVI nicht unterschieden werden kann, ob eine Fläche kaum bewachsen ist oder ungesunde Vegetation besitzt, kann hier vernachlässigt werden. Das Gebiet, das in dieser Arbeit untersucht wird, ist ein bewachsenes Feld, so kann man geringe Vegetation ausschließen. \n\n\\section{Sentinel-2}\\label{sec:sentinel2}\n\nDie Sentinel-2-Satelliten sind eine von sechs Satellitenarten (Sentinel-1 bis -6) des Copernicus-Programms\\footnote{Das Copernicus-Programm wurde von der Europäischen Union zur Erdbeobachtung ins Leben gerufen. Die gesammelten Daten werden für wissenschaftliche, wirtschaftliche und private Anwendungszwecke zur Verfügung gestellt.\\cite{ref:copernicus}}, die zur Erdbeobachtung in einen 786 km hohen sonnensynchronen Orbit gebracht wurden. Die Instrumente der Sentinel-2-Satelliten können Aufnahmen in Bereichen des roten und nahen Infrarot- bis hin zum Kurzwelleninfrarotspektrums. Die Aufnahmen haben Gesamtgröße von $100*100$ km und je nach Band eine von Auflösung von 10m, 20m oder 60m (s. Tabelle \\ref{tab:resolutions}).\n\n\\begin{table}[ht]\n\\centering\n\\begin{tabular}{c|c|c|c}\nBandnummer & Auflösung & Wellenlänge (nm) & Bandbreite (nm) \\\\\n\\hline\nB1 & 60 & 443,9 & 27\\\\\nB2 & 10 & 496,6 & 98\\\\\nB3 & 10 & 560 & 45\\\\\nB4 & 10 & 664,5 & 38\\\\\nB5 & 20 & 703,9 & 19\\\\\nB6 & 20 & 740,2 & 18\\\\\nB7 & 20 & 782,5 & 28\\\\\nB8 & 10 & 835,1 & 145\\\\\nB8a & 20 & 864,8 & 33\\\\\nB9 & 60 & 945 & 26\\\\\nB10 & 60 & 1373,5 & 75\\\\\nB11 & 20 & 1613,7 & 143\\\\\nB12 & 20 & 2202,4 & 242\\\\\n\\end{tabular}\n\\caption{Räumliche und spektrale Auflösungen von Sentinel-2A\\cite{ref:sentinel:radiores}}\\label{tab:resolutions}\n\\end{table}\n\\noindent\nBesonders wichtig sind die Bänder B4 (Rot) und B8 (Nahes Infrarot). Mit diesen Bändern kann der NDVI (s. Kapitel \\ref{sec:ndvi}) berechnet werden.\\cite{ref:sentinel:ndvi} Die Sentinel-2-Satelliten bieten mit $10*10$ m pro Pixel eine hohe räumliche Auflösung.\\footnote{Im Vergleich hat zum Beispiel der Landsat-8-Satellit, dessen Daten ebenfalls frei verfügbar sind, eine relativ geringe Auflösung von $30*30$ m.\\cite{ref:landsat}} Diese Eigenschaft ist wichtig, um eine mögliche Infizierung genau eingrenzen zu können.\\\\\\\\\nDabei ist es auch wichtig, dass die Satelliten regelmäßige Daten liefern können. Durch die gemeinsame Konstellation übertragen die Plattformen alle fünf Tage Daten über einen spezifischen Punkt auf der Erdoberfläche.\\cite{ref:sentinel:resolutions} Damit ist gewährleistet, dass der Feldbesitzer ohne persönliche Inspektion ein bis zweimal in der Woche eine Gesundheitseinschätzung über seine Felder erhält.\n\n\\section{Das trainierbare Modell}\\label{sec:maskrcnn}\nIn Kapitel \\ref{sec:ndvi} und \\ref{sec:sentinel2} wurde erklärt wie Daten über die möglichen Erkrankungen geliefert und verarbeitet werden können. Auf den zugrunde liegenden Bilddaten soll nun ein künstliches neuronales Netzwerk (KNN) trainiert werden. In diesem Kapitel wird darauf eingegangen, welche Anforderungen an das KNN gestellt werden, warum das Titel gebende Netz ausgewählt wurde und wie dieses funktioniert.\n\n\\subsection{Anforderungen}\\label{sec:sub:requirements}\nDas KNN muss in der Lage sein, wahrscheinliche Krankheiten in der zu untersuchenden Agrarfläche möglichst genau eingrenzen und klassifizieren zu können. Das ist besonders wichtig, wenn ein Feld von multiplen Krankheiten betroffen ist.\\\\\\\\\nEs ist damit zu rechnen, dass Daten unter bewölkten Bedingungen aufgenommen werden. Nach starken Niederschlägen können Acker teils oder gänzlich überflutet sein.\\cite{ref:root-rot} Das sorgt selbst unter wolkenfreien Bedingungen für einen niedrigen NDVI, obwohl die Nutzpflanzen gesund sind. Das neuronale Netz muss mit solchen \\glqq Ausreißern\\grqq{} umgehen können.\n\\\\\\\\\nDaraus ergeben sich folgende Kriterien für das neuronale Netzwerk:\n\n\\begin{itemize}\n\t\\item Erkennung auf Pixelebene\n\t\\item Robustheit\n\t\\item Hohe Genauigkeit \n\\end{itemize}\n\n\\subsection{Grundlagen}\\label{sec:sub:basics}\n\n\\subsubsection{Vollständig vernetztes neuronales Netz}\n\n\\noindent\nKünstliche neuronale Netze sind mathematische Modelle, die nach dem Vorbild von biologischen neuronalen Netzen gebildet worden sind. So ist ein KNN ebenfalls eine Verbindung von künstlichen Neuronen. Diese Neuronen sind in Schichten angeordnet und jede die Neuronen einer Schicht sind mit den Neuronen nächsten bzw. letzten Schicht verbunden. Zwischen der ersten und der letzten sog. Ausgangsschicht existieren $n$ versteckte Schichten (engl.: hidden layers). \n\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=0.8\\textwidth]{pics/neural-net.PNG}\n  \\caption[Künstliches neuronales Netz]{Künstliches neuronales Netz\\cite{ref:verrelst}}\n  \\label{fig:ann}\n\\end{figure}\n\\noindent\nEin Neuron besitzt mehrere Eingangsverbindungen (Gewichte) und ein Ausgangsneuron. Ob ein Neuron \"`feuert\"', wird durch eine lineare oder nicht-lineare Aktivierungsfunktion bestimmt. Die Eingangsgewichte sind veränderbare Werte, die je nach Höhe einen starken oder niedrigen Einfluss auf die Aktivierungsfunktion haben.\n\\begin{equation}\\label{equ:neuron}\nx^{l+1}_{j}=f(\\sum\\nolimits_i w^l_{ij}x^l_i + w^l_{bj})\n\\end{equation}\nbeschreibt das Neuron $j$ in Schicht $l+1$, wobei\n\\begin{itemize}\n\t\\item $w^l_{ij}$ die Gewichte sind, die Neuron $i$ in Schicht $l$ mit Neuron $j$ verbinden.\n\t\\item $w^l_{bj}$ der Biasterm des $j$-ten Neurons in Schicht $l$ ist.\n\t\\item $f$ die Aktivierungsfunktion ist.\\cite{ref:verrelst}\n\\end{itemize} \n\n\\subsubsection{Convolutional Neural Networks}\\label{sec:sub:sub:cnn}\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=0.95\\textwidth]{pics/cnn.png}\n  \\caption[CNN]{Architektur eines Convolutional Neural Network\\cite{ref:cnn-architecture}}\n  \\label{fig:cnn-architecture}\n\\end{figure}\n\n\\noindent \n\\textit{Convolutional Neural Networks} (CNN, dt.: faltendes neuronales Netzwerk) sind Kategorien von neuronalen Netzen, die besonders in der \\textit{Computer Vision} Anwendung finden. In der ersten Schicht werden mehrere Merkmale (engl.: features) durch Filter extrahiert und in separate sog. \\textit{Feature Maps} abgelegt, um größere Abstraktionsebenen zu erreichen. Diese Filter sind mathematisch mit Faltungen (engl.: convolutions) zu vergleichen und geben dem Netz den Namen. \n\\\\\\\\\nDie Dimensionen der Feature Maps werden in einem Poolingschritt\\footnote{Es gibt verschiedene Arten von Pooling (Max, Average, Sum, ...). Dabei wird die $m*m$ px große Feature Map in sich angrenzende $n*n$ px große Felder eingeteilt ($n<m$). Im Falle von Max-Pooling wird der höchste Wert aus dem Feld übernommen.} (oder auch \\textit{subsampling}) reduziert. Dadurch bleiben nur relevante Informationen erhalten und das CNN wird bis zu einem gewissen Grad robust gegenüber Translationen und Rotationen. In der Regel werden die Faltungen und das das Pooling zwei Mal durchgeführt, wie es in Abb. \\ref{fig:cnn-architecture} abgebildet ist.\n\\\\\\\\\nNach der Merkmalextraktion werden die Feature Maps zur Klassifikation in eine eindimensionale Schichten geglättet. Die folgenden Schichten bis zur Ausgangsschicht sind vollständig vernetzt.\n\n\n\\subsection{Mask R-CNN}\\label{sec:sub:mask-rcnn}\n\nIm Rahmen dieser Arbeit wird das \\textit{Mask Region-based Convolutional Neural Network} untersucht. Mask R-CNN ist eine von Facebook AI Research (FAIR) entwickelte Erweiterung des \\textit{Faster R-CNN} und kann verschiedene Instanzen einer Klasse in einem Bild von einander trennen. Dazu muss zuerst die Begriffe der Instanzsegmentierung definiert werden.\n\\\\\\\\\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=0.8\\textwidth]{pics/instance-segmentation.png}\n  \\caption[Instanzsegmentierung]{Unterschied Klassifizierung / semantische Segmentierung / Objekterkennung / Instanzsegmentierung\\cite{ref:matterport:maskrcnn}}\n  \\label{fig:instance-segmentation}\n\\end{figure}\n\\noindent\nEinfache Klassifizierung (engl.: classification) ordnet Bilder als Ganzes einer Klasse zu. \\textit{Semantische Segmentierung} (engl.: semantic segmentation) beschreibt die Klassifizierung auf Pixelebene. Es wird erkannt zu welcher Klasse eine Menge von Pixeln gehören, aber es wird nicht zwischen einzelnen Objekten unterschieden. \\textit{Objekterkennung} (engl.: object detection) entdeckt und lokalisiert unterschiedliche Objekte, indem es eine Bounding Box um jedes erkannte Objekt zieht. Jedoch fehlt hier die pixelgenaue Abgrenzung einzelner Objektinstanzen. \\text{Instanzsegmentierung} (engl.: instance segmentation) kombiniert \\textit{Objekterkennung} und \\textit{semantische Segmentierung} und ist so in der Lage zwischen einzelnen Objekten zu unterscheiden und ihnen entsprechende Pixel zuzuordnen (s. Abb. \\ref{fig:instance-segmentation}) und ist eine der größten Herausforderungen in der Bildverarbeitung.\\cite{ref:maskrcnn}\n\\\\\\\\\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=\\textwidth]{pics/maskrcnn-archtecture.PNG}\n  \\caption[Mask R-CNN-Architektur]{Mask R-CNN-Architektur\\cite{ref:mask-rcnn-architecture}}\n  \\label{fig:maskrcnn-architecture}\n\\end{figure}\n\\noindent\nMask R-CNN ist wie Faster R-CNN in zwei Segmente eingeteilt. In dem ersten Segment, dem \\textit{Region Proposal Network} (oder auch RPN), werden mehrere Rahmen (engl.: Bounding Boxes) innerhalb eines Bildes vorgeschlagen, die interessante Objekte beinhalten könnten. Das RPN erzeugt Rechtecke - sog. Anker (engl.: Anchors) - von unterschiedlichen Größen und Bildverhältnissen, die sich über die Bildregion verteilen und sich überlappen. Für jeden Anker wird eine Ankerklasse und eine Bounding-Box-Verfeinerung ausgegeben. Die Klasse unterscheidet Vordergrund und Hintergrund, wobei eine Bounding-Box mit Vordergrundklassifizierung als potentielle Objekterkennung gewertet wird. Ein Anker ist möglicherweise nicht genau über ein Objekt zentriert. Die Verfeinerung ist eine geschätze Veränderung des Ankers in Position, Höhe und Größe, um besser das Objekt umrahmen zu können. Wenn mehrere Anker sich zu sehr überschneiden, wird der Anker mit der höchsten Wahrscheinlichkeit ein Objekt zu beinhalten übernommen und der restlichen Anker werden verworfen.\\footnote{Diese Methode wird \\textit{Non-max suppression} genannt.}\\cite{ref:matterport:maskrcnn}\\cite{ref:faster-r-cnn} Die vorgeschlagene Regionen, die einzeln von CNNs bewertet werden, ist der Kernansatz von R-CNN. Das RPN wurde identisch von Faster R-CNN für Mask R-CNN übernommen.\\cite{ref:maskrcnn} \n\\\\\\\\\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=.45\\textwidth]{pics/rpn-anchors.png}\n  \\includegraphics[width=.45\\textwidth]{pics/rpn-refinement.png}\n  \\caption[RPN-Anker]{Links: Vereinfachte Darstellung von Ankern über ein Bild\\cite{ref:matterport:maskrcnn} / Rechts: Drei Anker (gepunktet), die das das gleiche Objekt umschließen und die Verfeinerung (durchgezogen), die auf diese angewendet wird, um das Objekt genauer einzugrenzen\\cite{ref:matterport:maskrcnn}}\n  \\label{fig:rpn}\n\\end{figure}\n\\noindent\nIm zweiten Segment werden aus den Regionen \\textit{Bounding Boxes} (dt.: Rahmen) und Masken generiert und klassifiziert. Die Rahmen haben verschiedene Größen und können Probleme bei der Klassifizierung verursachen. Daher werden die Rahmen auf eine kleine Feature Map gleicher Größe (z.B. $7*7$ px) reduziert. Die Authoren von \\cite{ref:maskrcnn} schlagen eine Methode namens \\textit{RoI-Align} vor, bei der Proben aus der Feature Map entnommen werden und eine bilineare Interpolation angewendet wird. In dem bei Faster R-CNN angewandten Verfahren \\textit{RoI-Pooling} entstehen durch Quantisierung Informationsverluste und räumliche Abweichungen zwischen Bounding Box und Feature Map, was negative Auswirkungen auf die Maskengenerierung haben kann.\\cite{ref:maskrcnn}\n\\\\\\\\\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=0.90\\textwidth]{pics/fcn-architecture.PNG}\n  \\caption[FCN-Architektur]{FCN-Architektur\\cite{ref:mask-rcnn-architecture}}\n  \\label{fig:fcn-architecture}\n\\end{figure}\n\\noindent\nDie oberen vollständig vernetzten Schichten (\\textit{FC Layers} in Abb. \\ref{fig:maskrcnn-architecture}) klassifizieren die Regionen und die Bounding Boxes berechnet. Dieser Zweig ist für die Objekterkennung wichtig und noch mit Faster R-CNN gemeinsam. \n\\\\\\\\\nGleichzeitig werden in einem parallelen Zweig je Bounding Box $k$ $m*n$ große Masken zur semantischen Segmentierung erzeugt, wobei $k$ die Anzahl der Klassen ist.  Anders als in dem ersten Zweig des zweiten Segmentes werden die Masken durch \\textit{fully convolutional networks} (FCN, dt.: vollständig faltende Netzwerke) prognostiziert. Diese bestehen nur aus faltenden Schichten, wie sie in Kapitel \\ref{sec:sub:sub:cnn} beschrieben sind. Eine Maske ist eine räumliche Kodierung eines Objektes und daher ist es wichtig räumliche Informationen beizubehalten. Diese können durch die Pixel-zu-Pixel-Übereinstimmung extrahiert werden, welche sonst durch vollständig vernetzter Schichten verloren gehen. Diese geben einen Vektor ohne räumliche Dimensionen aus.\\cite{ref:maskrcnn}\n\\\\\\\\\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=\\textwidth, height=5cm]{pics/mrcnn-vs-fcis.PNG}\n  \\caption[Mask R-CNN vs. FCIS]{Bei FCIS entstehen Artefakte, wenn Objekte sich in einem Bild überlappen.\\cite{ref:maskrcnn}}\n  \\label{fig:maskvsfcis}\n\\end{figure}\n\\begin{table}[ht]\n  \\centering\n  \\includegraphics[width=\\textwidth]{pics/mrcnn-vs-fcis-vs-mnc.PNG}\n  \\caption[Mask R-CNN im Vergleich]{Instance segmentation \\textit{mask} AP auf COCO \\textit{test-dev}. MNC und FCIS sind Sieger der COCO 2015 und 2016 Challenge. Mask R-CNN erzielt deutlich bessere Ergebnisse als die komplexere FCIS+++.\\cite{ref:maskrcnn}}\n  \\label{tab:maskvsfcisvsmnc}\n\\end{table}\n\\noindent\nIn \\cite{ref:maskrcnn} wird Mask R-CNN mit den \\textit{COCO challenge}-Gewinnern\\footnote{COCO (Common Objects in Context, dt.: Gewöhnliche Objekte im Kontext) enthält einen Datensatz von über 200000 Bildern in über 80 Kategorien. Der Datensatz ist eine oft genutzte Basis, um Objekterkennungstechniken zu evaluieren und zu bewerten.\\cite{ref:coco}} der Jahre 2015 und 2016 verglichen. Der Vergleich zeigt, dass Mask R-CNN in der Challenge bessere Werte erzielt als die Konkurenten (s. Tab. \\. Desweiteren fällt \\textit{fully convolutional instance segmentation} (FCIS, dt.: vollständig faltende Instanzsegmentierung) auf, wenn es mit überlappenden Objekten konfrontiert wird. Dort erzeugt es Artefakte, welche durch Mask R-CNN nicht entstehen (s. Abb. \\ref{fig:maskvsfcis}). Durch diese Gegenüberstellungen wird gezeigt, dass Mask R-CNN alle aufgeführten Anforderungen erzielt. Es erkennt Klasseninstanzen auf Pixelebene und weist eine hohe Robustheit auf. Auch die Genauigkeit hebt sich beim direkten Vergleich ab. Aus diesen Gründen wurde Mask R-CNN im Rahmen diese Arbeit ausgewählt.\n\n\\section{Evaluation des Modells}\\label{sec:map}\n\nJetzt wo gezeigt wurde, welches Modell in dieser Arbeit genutzt wird, fehlt eine Möglichkeit ein trainiertes Modell zu bewerten. \\textit{Mean average precision} (oder auch mAP) ist eine Metrik, um die Genauigkeit einer Instanzsegmentierung zu messen.\\footnote{mAP ist nicht nur auf Instanzsegmentierung limitiert, sondern wird zum Beispiel auch als Metrik in der Objekterkennung genutzt.} Aber bevor die erklärt werden können, muss noch die Begriffe \\textit{Precision}, \\textit{Recall} und \\textit{Intersection over Union} eingegangen werden. \n\n\n\\subsection{Intersection over Union}\n\n\\textit{Intersection over Union} (oder auch IoU, dt: Schnitt über Vereinigung) ist eine wichtige Metrik für die semantische Segmentierung. Sie vergleicht die vorhergesagte Maske mit der Grundwahrheit\\footnote{Die Grundwahrheit (engl.: ground truth) ist hier die binäre Maske, die die infizierte Fläche repräsentiert.}, um zu messen wie gut die Vorhersage mit der Grundwahrheit übereineinstimmt.\\cite{ref:map}\n\n\\begin{equation}\\label{equation:recall}\n  IoU = \\frac{Grundwahrheit\\cap Vorhersage}{Grundwahrheit\\cup Vorhersage}\n\\end{equation}\n\\noindent\nDie Schnittmenge beinhaltet alle Pixel, die sich in der Grundwahrheit als auch in der vorhergesagten Maske befinden. Pixel, die sich in der Grundwahrheit und in der Vorhersage befinden, werden von der Vereinigung zusammengefasst. \n\\\\\\\\\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[width=\\textwidth]{pics/iou.PNG}\n  \\caption[IoU]{Beispiel Intersection over Union, Grundwahrheit in blau, Vorhersage in rot\\cite{ref:map}}\n  \\label{fig:iou}\n\\end{figure}\n\\noindent\nIn der semantischen Segmentierung wird für jede Klasse ein unterschiedlicher IoU-Wert berechnet und dann wird der Mittelwert aus diesen Werten ermittelt, um einen globalen Messwert zu haben. In der Instanzsegmenierung wird für jede einzelne Objektinstanz mittels Instanzgrundwahrheit und Instanzvorhersage ein separater IoU-Wert berechnet. Wenn ein bestimmter Grenzwert überschritten wird, gilt diese Instanz als tatsächlich richtige Erkennung.\\cite{ref:jordan}\n\n\\subsection{Precision und Recall}\n\n\\textit{Precision} (oder auch Falsch-Positiv-Rate) sagt aus mit welcher Wahrscheinlichkeit eine Vorhersage korrekt ist. Diese Metrik wird durch die Formel \n\\begin{equation}\\label{equation:precision}\n  Precison = \\frac{RP}{RP + FP}\n\\end{equation}\nberechnet, wobei $RP$ (Richtig-Positiv) die Anzahl der richtigen Erkennungen und $FP$ (Falsch-Positiv) die Anzahl der falschen Erkennungen sei.\\cite{ref:map} \\textit{Precision} ist also der Anteil von tätsächlich richtigen Erkennungen in Relation zu allen Erkennungen. In Bezug auf Instanzsegmentierung wird die Frage beantwortet, wie viele der erkannten Objekte in einem Bild tatsächlich eine passende Grundwahrheitüberschneidung und eine IoU-Grenzwertüberschreitung haben.\\cite{ref:jordan}\n\\\\\\\\\n\\textit{Recall} (oder auch Falsch-Negativ-Rate) misst die Wahrscheinlichkeit, dass alle tatsächlich wahren Detektionen korrekt erkannt wurden. Diese Metrik wird durch die Formel \n\\begin{equation}\\label{equation:recall}\n  Precison = \\frac{RP}{RP + FN}\n\\end{equation}\nberechnet, wobei $RP$ (Richtig-Positiv) die Anzahl der richtigen Erkennungen und $FN$ (Falsch-Negativ) die Anzahl der Objekte, die fälschlicherweise nicht erkannt wurden, sei. \\textit{Recall} ist also der Anteil von tätsächlich richtigen Erkennungen in Relation zu allen Objekten im Datensatz.\\cite{ref:map} In Bezug auf Instanzsegmentierung wird die Frage beantwortet, wie viele der Objekte mit Grundwahrheit in einem Bild als tatsächlich richtig erkannt werden und eine IoU-Grenzwertüberschreitung haben.\\cite{ref:jordan}\n\n\\subsection{Average Precision}\n\n\\begin{figure}[ht]\n  \\centering\n  \\includegraphics[height=5cm]{pics/kites.jpg}\n  \\hspace{.5cm}\n  \\includegraphics[height=5cm]{pics/precision-recall-kurve.png}\n  \\caption[Precision-Recall-Kurve]{Links: Beispielbild mit multiplen Detektionen und Klassen\\cite{ref:arlen}\\\\Rechts: Beispiel Precision-Recall-Kurve für die Klasse ``Person''\\cite{ref:huang}}\n  \\label{fig:precision-recall}\n\\end{figure}\n\\noindent\nEin \\textit{Precision}- und \\textit{Recall}-Wert bezieht sich jeweils auf eine detektierte Objektinstanz einer Klasse. Bei mehreren detektierten Objekte einer Klasse in einem Bild können diese in einer Precision-Recall-Kurve visualisiert werden (s. Abb. \\ref{fig:precision-recall}). \\textit{Average Precision} (oder auch AP) fasst die Form der Kurve zu einem Wert zusammen, indem es den Durchschnitt der \\textit{Precision}-Werte an elf \\textit{Recall}-Werten $[0, 0.1, \\dots, 1]$ berechnet: \n\n\\begin{equation}\\label{equation:ap}\n  AP = \\frac{1}{11} \\sum_{r \\in \\{0, 0.1, \\dots, 1\\}}  p_{interp}(r)\n\\end{equation}\n\\noindent\nEin \\textit{Precision}-Wert $p$ an der \\textit{Recall}-Stelle $r$ wird interpoliert, indem der Maximumwert übernommen an der \\textit{Recall}-Stelle $\\tilde{r}\\ge r$ wird:\n\n\\begin{equation}\\label{equation:pinterp}\n  p_{interp}(r) = \\max_{\\tilde{r}:\\tilde{r}\\ge r} p (\\tilde{r})\n\\end{equation}\n\\noindent\nwobei $p(\\tilde{r})$ der \\textit{Precision}-Wert $p$ an der \\textit{Recall}-Stelle $\\tilde{r}$ sei. Die Interpolation reduziert den Einfluss kleiner, lokaler Unebenheiten in der Kurve.\\cite{ref:huang}\n\n\\subsection{Mean Average Precision}\n\n\\textit{Mean Average Precision} ist der Durschschnitt aller \\textit{Average Precision}-Werte jeder Klasse in jedem Element eines (Sub-)Datensatzes.\\footnote{\\textit{mAP} wird oft nur \\textit{AP} genannt.} \\textit{mAP} wird zum Beispiel auch in der COCO- oder PASCAL-VOC-Challenge benutzt, um die Resultate der Challenge-Teilnehmer zu bewerten (s. Tabelle \\ref{tab:maskvsfcisvsmnc}). Aber hier kann es zu Unterschieden kommen, wie der \\textit{mAP} berechnet wird. So ist es bei der COCO-Challenge der durchschnittliche \\textit{mAP} über verschiedene \\textit{IoU}-Grenzwerte. Hier wird jeweils ein \\text{mAP} an zehn verschiedenen \\textit{IoU}-Werten $[0.5, 0.55, \\dots, 0.95]$ berechnet und aus den Ergebnissen wird der Durchschnitt ermittelt.\\cite{ref:coco:eval} In dieser Arbeit wird stets $IoU=0.5$ als Grenzwert benutzt, um die Auswertung einfach zu halten.",
 			"file": "methods.tex",
-			"file_size": 23784,
-			"file_write_time": 131943011753108378,
 			"settings":
 			{
-				"buffer_size": 23611,
+				"buffer_size": 23860,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "main.tex",
+			"settings":
+			{
+				"buffer_size": 3907,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "title.tex",
+			"settings":
+			{
+				"buffer_size": 832,
+				"encoding": "UTF-8",
+				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "experiments.tex",
 			"settings":
 			{
-				"buffer_size": 15626,
+				"buffer_size": 16201,
 				"encoding": "UTF-8",
 				"line_ending": "Windows",
 				"name": "\\chapter{Experimente}"
@@ -370,7 +385,7 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -392,21 +407,13 @@
 						],
 						"settings":
 						{
-							"WordCount":
-							{
-								"changes": -1,
-								"modified": true,
-								"selection": true,
-								"status": -1,
-								"syntax": "json"
-							},
 							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
@@ -430,7 +437,7 @@
 						{
 							"WordCount":
 							{
-								"changes": 179,
+								"changes": 0,
 								"count": 471,
 								"modified": false,
 								"selection": false,
@@ -444,7 +451,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -480,10 +487,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1220.0,
+						"translation.y": 840.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -492,23 +499,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 24650,
+						"buffer_size": 24822,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								252,
-								252
+								6722,
+								6722
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 126,
-								"count": 2588,
+								"changes": 290,
+								"count": 2609,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -522,7 +529,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 3,
 					"type": "text"
 				},
 				{
@@ -531,23 +538,23 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 23611,
+						"buffer_size": 23860,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								40,
-								40
+								280,
+								280
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 6,
-								"count": 2436,
+								"changes": 412,
+								"count": 2468,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -561,32 +568,108 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "experiments.tex",
+					"file": "main.tex",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 15626,
+						"buffer_size": 3907,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								15626,
-								15626
+								3759,
+								3759
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 5066,
-								"count": 1440,
+								"changes": 21,
+								"count": 117,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2220.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "title.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 832,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								283,
+								283
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 24,
+								"count": 55,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "experiments.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16201,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16167,
+								16167
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 1078,
+								"count": 1511,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -597,10 +680,10 @@
 							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 4939.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 4,
 					"type": "text"
 				}
 			]
