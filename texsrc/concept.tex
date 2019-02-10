@@ -1,4 +1,6 @@
-\chapter{Konzept und Implementierung}\label{chap:concept}
+\chapter{Konzept und Implementierungsdetails}\label{chap:concept}
+
+Das Programmablauf wird in einzelne Schritte unterteilt, auf die in den nächsten Unterkapiteln näher eingegangen werden. Gleichzeitig werden elementare Implemntierungsdetails aufgeführt.
 
 \section{Konzept}\label{sec:concept}
 
@@ -9,7 +11,6 @@
   \label{fig:overview}
 \end{figure}
 \noindent
-Das Programmablauf wird in einzelne Schritte unterteilt, auf die in den nächsten Kapiteln näher eingegangen werden.
 \\\\
 Zuerst müssen die Daten für das Training bzw. für die Erkennung manuell annotiert werden. Diese Metadaten werden dann genutzt, um automatisch Sentinelprodukte\footnote{Aufnahmenpakete der Sentinel-Plattformen werden als Produkte bezeichnet.} mittels einer API, die von der Copernicus zur Verfügung gestellt wird, herunterzuladen. Aus den Produkten werden die relevanten Bänder extrahiert und unter anderem die jeweiligen NDVI-Werte berechnet. Nachdem die Produkte für das Training vorbereitet wurden, werden die Daten in ein Trainings- und in ein Validierungsdatensatz aufgeteilt. Der folgende Trainingsprozess basiert auf diesen Datensätzen. Sobald das Training abgeschlossen ist, kann die Performanz des Modells getestet werden. 
 
