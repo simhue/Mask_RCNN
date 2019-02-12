@@ -52,39 +52,28 @@
 	"buffers":
 	[
 		{
-			"file": "masterthesis.sublime-project",
-			"settings":
-			{
-				"buffer_size": 133,
-				"encoding": "UTF-8",
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "summary.tex",
-			"settings":
-			{
-				"buffer_size": 3742,
-				"encoding": "UTF-8",
-				"line_ending": "Windows",
-				"name": "\\chapter{Fazit und Ausblick}\\label{chap:summary}"
-			}
-		},
-		{
 			"file": "literature.bib",
 			"settings":
 			{
-				"buffer_size": 19663,
+				"buffer_size": 10242,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "concept.tex",
+			"file": "introduction.tex",
 			"settings":
 			{
-				"buffer_size": 24822,
+				"buffer_size": 5090,
 				"encoding": "UTF-8",
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "introduction.aux",
+			"settings":
+			{
+				"buffer_size": 2071,
 				"line_ending": "Windows"
 			}
 		},
@@ -92,16 +81,26 @@
 			"file": "methods.tex",
 			"settings":
 			{
-				"buffer_size": 23860,
+				"buffer_size": 24089,
 				"encoding": "UTF-8",
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "main.tex",
+			"contents": "Searching 10 files for \"fig:training\"\n\nF:\\projects\\Mask_RCNN\\texsrc\\concept.tex:\n  258    \\includegraphics[height=.95\\textheight,width=.4\\textwidth]{pics/train-model.png}\n  259    \\caption{Ablaufdiagramm des Trainings}\n  260:   \\label{fig:training}\n  261  \\end{figure}\n  262  \n  ...\n  267    \\includegraphics[height=0.6\\textheight]{pics/detect.png}\n  268    \\caption{Ablaufdiagramm der Erkennung}\n  269:   \\label{fig:training}\n  270  \\end{figure}\n  271  \\noindent\n\n2 matches in 1 file\n\n\n\nSearching 10 files for \"ref:cnn\"\n\nF:\\projects\\Mask_RCNN\\texsrc\\methods.tex:\n  100    \\centering\n  101    \\includegraphics[width=0.95\\textwidth]{pics/cnn.png}\n  102:   \\caption[CNN]{Architektur eines Convolutional Neural Network\\cite{ref:cnn-architecture}}\n  103    \\label{fig:cnn-architecture}\n  104  \\end{figure}\n\n1 match in 1 file\n",
 			"settings":
 			{
-				"buffer_size": 3907,
+				"buffer_size": 821,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "concept.tex",
+			"settings":
+			{
+				"buffer_size": 25004,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -110,19 +109,18 @@
 			"file": "title.tex",
 			"settings":
 			{
-				"buffer_size": 832,
+				"buffer_size": 1102,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "experiments.tex",
+			"file": "summary.tex",
 			"settings":
 			{
-				"buffer_size": 16201,
+				"buffer_size": 3763,
 				"encoding": "UTF-8",
-				"line_ending": "Windows",
-				"name": "\\chapter{Experimente}"
+				"line_ending": "Windows"
 			}
 		}
 	],
@@ -244,9 +242,21 @@
 	"file_history":
 	[
 		"/F/projects/Mask_RCNN/texsrc/main.tex",
-		"/F/projects/Mask_RCNN/texsrc/overfitting.aux",
+		"/F/projects/Mask_RCNN/texsrc/experiments.tex",
+		"/F/projects/Mask_RCNN/texsrc/main.out",
+		"/F/projects/Mask_RCNN/texsrc/deuplain.bst",
+		"/F/projects/Mask_RCNN/texsrc/main.blg",
+		"/F/projects/Mask_RCNN/texsrc/main.bbl",
+		"/F/projects/Mask_RCNN/texsrc/masterthesis.sublime-project",
+		"/F/projects/Mask_RCNN/texsrc/summary.tex",
+		"/F/projects/Mask_RCNN/texsrc/concept.tex",
+		"/F/projects/Mask_RCNN/texsrc/main.aux",
+		"/F/projects/Mask_RCNN/texsrc/methods.tex",
 		"/F/projects/Mask_RCNN/texsrc/overfitting.tex",
+		"/F/projects/Mask_RCNN/texsrc/concept.aux",
 		"/F/projects/Mask_RCNN/texsrc/introduction.tex",
+		"/F/projects/Mask_RCNN/texsrc/title.tex",
+		"/F/projects/Mask_RCNN/texsrc/overfitting.aux",
 		"/F/projects/Mask_RCNN/texsrc/introduction.aux",
 		"/F/projects/Mask_RCNN/texsrc/future.tex",
 		"/C/Dev/projects/Mask_RCNN/Mask_RCNN/datasets/crop-disease/regions.json",
@@ -277,11 +287,11 @@
 	],
 	"find":
 	{
-		"height": 29.0
+		"height": 41.0
 	},
 	"find_in_files":
 	{
-		"height": 104.0,
+		"height": 107.0,
 		"where_history":
 		[
 			"*.tex",
@@ -293,6 +303,34 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"tabular",
+			"minipage",
+			"{COCO Consortium}",
+			"ref:cnn",
+			"fig:training",
+			"and",
+			"n.d.",
+			"natbib",
+			"and",
+			"vegetation",
+			"measuring_",
+			"ttps://sentinel.esa.int/web/sentinel/technical-\nguides/sentinel-2-msi/level-2a/algorithm",
+			" https://sentinel.esa.int/web/sentinel/technical-\nguides/sentinel-2-msi/level-2a/algorithm",
+			"_",
+			"overfitting",
+			"Overfitting",
+			"\\textit{\\textit{RoI}}",
+			"mAP",
+			"Rois",
+			"RoI",
+			"Rechts",
+			"sei",
+			"ff.",
+			" ff.",
+			"f.",
+			" ff.",
+			" f.",
+			"Anwednung",
 			"Anwendung",
 			" ",
 			"sentinel",
@@ -375,6 +413,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"ff.",
+			"f."
 		],
 		"reverse": false,
 		"show_context": true,
@@ -385,98 +425,32 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "masterthesis.sublime-project",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 133,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1,
-								1
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JSON.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "summary.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3742,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2384,
-								2384
-							]
-						],
-						"settings":
-						{
-							"WordCount":
-							{
-								"changes": 0,
-								"count": 471,
-								"modified": false,
-								"selection": false,
-								"status": -1,
-								"syntax": "plain text"
-							},
-							"auto_name": "\\chapter{Fazit und Ausblick}\\label{chap:summary}",
-							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "literature.bib",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 19663,
+						"buffer_size": 10242,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9056,
-								9056
+								10192,
+								10192
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 0,
-								"count": 2013,
+								"changes": 300,
+								"count": 839,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -487,66 +461,64 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 460.0,
+						"translation.y": 5640.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "concept.tex",
+					"buffer": 1,
+					"file": "introduction.tex",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 24822,
+						"buffer_size": 5090,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6722,
-								6722
+								2589,
+								2589
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 0,
-								"count": 2609,
+								"changes": 132,
+								"count": 581,
 								"modified": false,
 								"selection": false,
 								"status": -1,
 								"syntax": "plain text"
 							},
-							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 721.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "methods.tex",
+					"buffer": 2,
+					"file": "introduction.aux",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 23860,
+						"buffer_size": 2071,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								280,
-								280
+								0,
+								0
 							]
 						],
 						"settings":
@@ -554,15 +526,13 @@
 							"WordCount":
 							{
 								"changes": 0,
-								"count": 2468,
-								"modified": false,
-								"selection": false,
+								"count": 8,
+								"modified": true,
+								"selection": true,
 								"status": -1,
 								"syntax": "plain text"
 							},
-							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/Text/Plain text.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -572,28 +542,28 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
-					"file": "main.tex",
+					"buffer": 3,
+					"file": "methods.tex",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 3907,
+						"buffer_size": 24089,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								965,
-								965
+								8741,
+								8741
 							]
 						],
 						"settings":
 						{
 							"WordCount":
 							{
-								"changes": 0,
-								"count": 117,
+								"changes": 3,
+								"count": 2484,
 								"modified": false,
 								"selection": false,
 								"status": -1,
@@ -604,10 +574,112 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 80.0,
+						"translation.y": 2497.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 821,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										235,
+										247
+									],
+									[
+										413,
+										425
+									],
+									[
+										721,
+										728
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								670,
+								670
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 8,
+								"count": 26,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"detect_indentation": false,
+							"line_numbers": false,
+							"output_tag": 2,
+							"result_base_dir": "",
+							"result_file_regex": "^([^ \t].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "concept.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 25004,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								10766,
+								10766
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 7,
+								"count": 2620,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "latex"
+							},
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3221.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -616,56 +688,72 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 832,
+						"buffer_size": 1102,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								283,
-								283
+								1102,
+								1102
 							]
 						],
 						"settings":
 						{
+							"WordCount":
+							{
+								"changes": 846,
+								"count": 71,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
+							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
+						},
+						"translation.x": 0.0,
+						"translation.y": 269.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "summary.tex",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3763,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								29,
+								29
+							]
+						],
+						"settings":
+						{
+							"WordCount":
+							{
+								"changes": 22,
+								"count": 470,
+								"modified": false,
+								"selection": false,
+								"status": -1,
+								"syntax": "plain text"
+							},
 							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "experiments.tex",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 16201,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								16167,
-								16167
-							]
-						],
-						"settings":
-						{
-							"auto_name": "\\chapter{Experimente}",
-							"spell_check": true,
-							"syntax": "Packages/LaTeX/LaTeX.sublime-syntax"
-						},
-						"translation.x": 0.0,
-						"translation.y": 4939.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
+					"stack_index": 3,
 					"type": "text"
 				}
 			]
@@ -708,7 +796,7 @@
 	},
 	"output.latextools":
 	{
-		"height": 82.0
+		"height": 147.0
 	},
 	"pinned_build_system": "",
 	"project": "masterthesis.sublime-project",

@@ -1,4 +1,4 @@
-\documentclass[a4paper,12pt,headsepline]{report}
+\documentclass[a4paper,12pt,headsepline,ngerman]{report}
 
 %----------------- PDF CONFIG ----------------- %
 \pdfinfo{    
@@ -17,7 +17,8 @@
 %----------------- PAKETE INKLUDIEREN ----------------- %
 
 \usepackage{geometry} % Packet für Seitenrandabständex und Einstellung für Seitenränder
-\usepackage[ngerman]{babel} % deutsche Silbentrennung
+\usepackage[ngerman]{babel} % deutsche Silbentrennung 
+\usepackage{babelbib}
 
 \usepackage{todonotes}
 \usepackage{booktabs} %entzerrt die Tabellenzeilen und bietet verschieden dicke Unterteilungslinien
@@ -75,7 +76,6 @@
       {]}{{{\color{delim}{]}}}}{1},
 }
 
-
 \usepackage[nottoc]{tocbibind}
 
 % für Listings
@@ -117,7 +117,7 @@
 \include{summary}
 
 %\printbibliography
-\bibliographystyle{abbrv}
+\bibliographystyle{babplain-lf}
 \bibliography{literature}
 
 % ----- Abbildungen ----- %
