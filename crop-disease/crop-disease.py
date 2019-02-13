@@ -65,7 +65,7 @@ class CropDiseaseConfig(Config):
     # Give the configuration a recognizable name
     NAME = "crop-disease"
 
-    IMAGES_PER_GPU = 4
+    IMAGES_PER_GPU = 1
 
     # Number of classes (including background)
     # TODO: Dynamic number of classes
@@ -300,13 +300,21 @@ def detect(model, dataset, image_id):
 
 
 def detect_image(model, filename):
-    image = skimage.color.gray2rgb(skimage.io.imread(filename) * 255)
-    results = model.detect([image], verbose=1)
+    image = np.flip(skimage.color.gray2rgb(skimage.io.imread(filename + ".tif") * 255), 1)
 
+    masked_arr = np.load(filename + ".mask")
+    mask = np.flip(np.expand_dims(masked_arr[0], axis=2), 1)
+
+    visualize.display_top_masks(image, mask, np.ones([mask.shape[-1]], dtype=np.int32), ["BG", "infection"])
+
+
+    results = model.detect([image], verbose=1)
     # Visualize results
     r = results[0]
+
     visualize.display_instances(image, r['rois'], r['masks'], r['class_ids'],
                                 ["BG", "infection"], r['scores'])
+
 
 
 ############################################################
@@ -412,10 +420,8 @@ if __name__ == '__main__':
         for image_id in image_ids[:10]:
              detect(model, dataset_test, image_id)
 
-        # detect_image(model, "ndvi.tif")
-        # detect_image(model, "ndvi-2.tif")
-        # detect_image(model, "ndvi-3.tif")
-        # detect_image(model, "ndvi-4.tif")
+        # for i in range(10):
+        #     detect_image(model, "ndvi-" + str(i))
     else:
         print("'{}' is not recognized. "
               "Use 'train' or 'detect'".format(args.command))

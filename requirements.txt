@@ -11,3 +11,9 @@ h5py
 imgaug
 IPython[all]
 geojson
+sentinelsat
+rasterio
+geopandas
+scikit-learn
+fiona
+Pillow
